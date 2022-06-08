@@ -8,6 +8,8 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "tbl_billstorage")
 @Data
@@ -17,13 +19,10 @@ public class Bill {
 
 	@Column(name = "id")
 	private Long id;
-	private String premonth;
-	private String curmonth;
-	private Long preread;
-	private Long curread;
-	private Long netunit;
-	private int slabrate;
-	private Long billamount;
-	@Column(name = "username")
-	private String username;
+	private Date currentdate;
+	private Double curread;
+	private Double netunit;
+	private Double slabrate;
+	private Double billamount;
+	private Long userid;
 }

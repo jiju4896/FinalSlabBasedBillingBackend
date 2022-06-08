@@ -14,8 +14,8 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	@Override
 	List<Bill> findAll();
 
-	List<Bill> findAllByUsername(String username);
+	List<Bill> findAllByUserid(String userid);
 
-	@Query(value = "SELECT * FROM tbl_billstorage WHERE  username = :username   ", nativeQuery = true)
-	Bill getLastBillDetails(@Param("username") String username);
+	@Query(value = "SELECT * FROM tbl_billstorage WHERE  userid = :userid ORDER BY Id DESC LIMIT 1  ", nativeQuery = true)
+	Bill getLastBillDetails(@Param("userid") Long userid);
 }
