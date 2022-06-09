@@ -1,5 +1,6 @@
 package com.slabBased.project.controller;
 
+import com.slabBased.project.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,62 +22,37 @@ import com.slabBased.project.repository.UserRepository;
 @RequestMapping("/sign")
 @CrossOrigin("*")
 public class UserController {
-	@Autowired
-	UserRepository uRepo;
 
-	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	@Autowired
+	UserServices userServices;
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<User> addUser(@RequestBody User user) {
-		if (uRepo.existsByUsername(user.getUsername())) {
-			throw new RuntimeException("Username already exists");
-		}
-		User usr = new User();
-		usr.setId(user.getId());
-		usr.setUsername(user.getUsername());
-		usr.setEmail(user.getEmail());
-		usr.setFirstname(user.getFirstname());
-		usr.setLastname(user.getLastname());
-		usr.setPassword(passwordEncoder.encode(user.getPassword()));
+	public Object addUser(@RequestBody User user) {
 
-		uRepo.save(usr);
-
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		return userServices.addUserAccount(user);
 	}
 
-	@PostMapping("/reglog")
-	public ResponseEntity<User> loginUser(@RequestBody User user) {
+	@PostMapping("/regLog")
+	@ResponseStatus(HttpStatus.OK)
+	public Object loginUser(@RequestBody User user) {
 
-		if (!(uRepo.existsByUsername(user.getUsername()))) {
 
-			throw new RuntimeException("Invalid Username ");
-
-		} else {
-			User usr ;
-			usr = uRepo.getByPassword(user.getUsername());
-
-			if (!(passwordEncoder.matches(user.getPassword(), usr.getPassword()))) {
-				throw new RuntimeException("Invalid Password");
-
-			}
-
-		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return userServices.userLoginCheck(user);
 	}
 
-	@GetMapping("/usernamecheck")
-	public Boolean usernameCheck(@RequestParam String username) {
+	@GetMapping("/userNameCheck")
+	public Boolean userNameCheck(@RequestParam String userName) {
 
-		return uRepo.existsByUsername(username);
+		return userServices.userNameCheck(userName);
 
 	}
 
-	@GetMapping("/usermatch")
+	@GetMapping("/userMatch")
 
-	public ResponseEntity<User> getMatchByUser(@RequestParam String username) {
+	public User getMatchByUser(@RequestParam String userName) {
 
-		return new ResponseEntity<>(uRepo.findByUsername(username), HttpStatus.OK);
+		return userServices.getMatchUserName(userName);
 	}
 
 }

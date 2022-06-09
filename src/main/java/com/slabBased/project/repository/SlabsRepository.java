@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface SlabsRepository extends JpaRepository<Slabs, Long> {
-    @Query(value = "SELECT * FROM tbl_slabs WHERE  userid = :userid  ", nativeQuery = true)
+    @Query(value = "SELECT * FROM tbl_slabs WHERE  slab_period_id = :userid  ", nativeQuery = true)
     List<Slabs> getAllSlabsInCurrentPeriod(@Param("userid") Long userid);
 }

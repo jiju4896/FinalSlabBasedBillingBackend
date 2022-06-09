@@ -6,26 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
+
 @Entity
-@Table(name="tbl_slabs")
+@Table(name="tbl_slab_period")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Slabs {
+public class SlabPeriod {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    @Column(name = "start_read")
-    private Double startRead;
-    @Column(name = "end_read")
-    private Double endRead;
-    @Column(name = "slab_rate")
-    private Double slabRate;
-    @Column(name = "slab_period_id")
-    private Long slabId;
+    @Column(name = "from_date")
+    private Date fromDate;
+    @Column(name = "to_date")
+    private Date toDate;
+
 
 }

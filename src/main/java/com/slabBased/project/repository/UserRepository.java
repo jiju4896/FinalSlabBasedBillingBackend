@@ -10,12 +10,12 @@ import com.slabBased.project.entity.User;
 
 @Repository
 public interface UserRepository extends  JpaRepository<User, Long>{
-	@Query(value = "SELECT * FROM tbl_user WHERE  username = :username   ", nativeQuery = true)
-	User getByPassword(@Param("username") String username);
+	@Query(value = "SELECT * FROM tbl_user WHERE  userName = :userName   ", nativeQuery = true)
+	User getByPassword(@Param("userName") String userName);
 	Boolean existsByPassword(String password);
 
-	boolean existsByUsername(String username);
+	boolean existsByUserName(String userName);
 
-	User findByUsername(String username);
+	User findByUserName(String userName);
 	
 }
