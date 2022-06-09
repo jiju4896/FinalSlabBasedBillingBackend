@@ -1,18 +1,15 @@
 package com.slabBased.project.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
-import com.slabBased.project.repository.SlabsRepository;
-import com.slabBased.project.repository.SlabPeriodRepository;
+
 import com.slabBased.project.services.BillServices;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.slabBased.project.calculator.BillCalculator;
+
 import com.slabBased.project.entity.Bill;
 
 
-import com.slabBased.project.repository.BillRepository;
 
 @RestController
 @RequestMapping("/billingSystem")

@@ -1,10 +1,9 @@
 package com.slabBased.project.calculator;
 
+import com.slabBased.project.utils.BillCalculatorUtils;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.crypto.Data;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -16,18 +15,18 @@ class BillCalculatorTest {
     Date tDate= new GregorianCalendar(2022, Calendar.APRIL, 11).getTime();
     Date cDate= new GregorianCalendar(2022, Calendar.MARCH, 11).getTime();
 
-    BillCalculator bc= new BillCalculator(fDate,tDate,cDate);
+    BillCalculatorUtils bc= new BillCalculatorUtils(fDate,tDate,cDate);
 
 
 
     @Test
     void testIfDateIsWithinRange() {
-       assertEquals(true,bc.isWithinRange());
+       assertTrue(bc.isWithinRange());
 
     }
     @Test
-    void testIfDateIsOutsideRange() {
-        assertEquals(false,bc.isWithinRange());
+    void failTestIfDateIsOutsideRange() {
+        assertFalse(bc.isWithinRange());
 
     }
 

@@ -1,10 +1,10 @@
-package com.slabBased.project.services;
+package com.slabBased.project.utils;
 
 
 import java.util.Date;
 
 
-public class BillCalculator {
+public class BillCalculatorUtils {
    Date fromDate, toDate, currDate;
 
     Double prevRead;
@@ -14,19 +14,19 @@ public class BillCalculator {
     Double endRead;
     Double slabValue;
 
-    public BillCalculator(Double startRead, Double endRead, Double curRead, Double prevRead) {
+    public BillCalculatorUtils(Double startRead, Double endRead, Double curRead, Double prevRead) {
         this.curRead = curRead;
         this.startRead = startRead;
         this.endRead = endRead;
         this.prevRead = prevRead;
     }
 
-    public BillCalculator(Double slabValue) {
+    public BillCalculatorUtils(Double slabValue) {
 
         this.slabValue = slabValue;
     }
 
-    public BillCalculator(Date fromDate, Date toDate, Date currDate) {
+    public BillCalculatorUtils(Date fromDate, Date toDate, Date currDate) {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.currDate = currDate;
