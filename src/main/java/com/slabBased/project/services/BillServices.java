@@ -16,18 +16,18 @@ import java.util.List;
 @Service
 public class BillServices {
     @Autowired
-    BillRepository bRepo;
+    BillRepository billRepository;
     @Autowired
-    SlabsRepository sRepo;
+    SlabsRepository slabsRepository;
     @Autowired
-    SlabPeriodRepository sPeriodRepo;
+    SlabPeriodRepository slabPeriodRepository;
     Double finalAmount = 0.0;
     Double net, sRate;
     Slabs slabs1;
     String resultOutput = " ";
 
     public String addSlabPeriod(SlabPeriod slabPeriod) {
-        sPeriodRepo.save(slabPeriod);
+        slabPeriodRepository.save(slabPeriod);
         return "SLAB PERIOD CREATED";
     }
 
@@ -36,9 +36,9 @@ public class BillServices {
         slabs.setId(slab.getId());
         slabs.setStartRead(slab.getStartRead());
         slabs.setEndRead(slab.getEndRead());
-        slabs.setSlabId(sPeriodRepo.getLastPeriod().getId());
+        slabs.setSlabId(slabPeriodRepository.getLastPeriod().getId());
         slabs.setSlabRate(slab.getSlabRate());
-        sRepo.save(slabs);
+        slabsRepository.save(slabs);
 
         return "Slab Range And Rate Created";
 
@@ -48,13 +48,10 @@ public class BillServices {
     public String BillCalculator(Bill bill) {
 
         Bill lastBill;
-
-
-        lastBill = bRepo.getLastBillDetails(bill.getUserId());
+        lastBill = billRepository.getLastBillDetails(bill.getUserId());
         Bill finalBill = new Bill();
 
-
-        List<SlabPeriod> periodList = new ArrayList<>(sPeriodRepo.findAll());
+        List<SlabPeriod> periodList = new ArrayList<>(slabPeriodRepository.findAll());
         if (periodList.isEmpty()){
             resultOutput="Slab Rate not yet created";
         }  else
@@ -66,7 +63,7 @@ public class BillServices {
                 slabPeriod1 = periodList.get(i);
                 BillCalculatorUtils periodCalc = new BillCalculatorUtils(slabPeriod1.getFromDate(), slabPeriod1.getToDate(), bill.getBillDate());
                 if (periodCalc.isWithinRange()) {
-                    List<Slabs> slabslist = new ArrayList<>(sRepo.getAllSlabsInCurrentPeriod(slabPeriod1.getId()));
+                    List<Slabs> slabslist = new ArrayList<>(slabsRepository.getAllSlabsInCurrentPeriod(slabPeriod1.getId()));
                     for (int j = 0; j < slabslist.size(); ) {
                         slabs1 = slabslist.get(j);
                         BillCalculatorUtils slabCalc = new BillCalculatorUtils(slabs1.getStartRead(), slabs1.getEndRead(), bill.getCurrentRead(), lastBill.getCurrentRead());
@@ -82,7 +79,7 @@ public class BillServices {
                             finalBill.setSlabRate(sRate);
                             finalBill.setUserId(bill.getUserId());
                             finalBill.setBillDate(bill.getBillDate());
-                            bRepo.save(finalBill);
+                            billRepository.save(finalBill);
                             break;
 
                         } else {
@@ -105,15 +102,15 @@ public class BillServices {
     }
 
     public List<Bill> getAllBillsByUserId(Long userId) {
-        return bRepo.findAllByUserId(userId);
+        return billRepository.findAllByUserId(userId);
     }
 
     public Bill getLastBillOfCurrentUser(Long userId) {
-        return bRepo.getLastBillDetails(userId);
+        return billRepository.getLastBillDetails(userId);
     }
 
     public Bill getBillDetailsByBillId(long id) {
-        return bRepo.findById(id);
+        return billRepository.findById(id);
     }
 
 

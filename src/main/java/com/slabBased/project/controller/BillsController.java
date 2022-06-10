@@ -24,9 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.slabBased.project.entity.Bill;
 
 
-
 @RestController
-@RequestMapping("/billingSystem")
+@RequestMapping("/billing-system")
 @CrossOrigin("*")
 public class BillsController {
     @Autowired
@@ -35,14 +34,14 @@ public class BillsController {
 
     //New API's
 
-    @PostMapping("/slabPeriodInitializer")
+    @PostMapping("/slab-period/initializer")
     public Object addSlabPeriod(@RequestBody SlabPeriod slabPeriod) {
 
 
         return billServices.addSlabPeriod(slabPeriod);
     }
 
-    @PostMapping("/slabInitializer")
+    @PostMapping("/slab/initializer")
     @ResponseStatus(HttpStatus.CREATED)
     public Object addSlab(@RequestBody Slabs slab) {
 
@@ -50,7 +49,7 @@ public class BillsController {
         return billServices.addSlab(slab);
     }
 
-    @PostMapping("/billgenerator")
+    @PostMapping("/bill/generator")
     @ResponseStatus(HttpStatus.CREATED)
     public String billGeneration(@RequestBody Bill bill) {
 
@@ -59,15 +58,15 @@ public class BillsController {
 
 
     //OLD API's
-    @GetMapping("/bills")
-    public List<Bill> readBillByUser(@RequestParam Long userId) {
+    @GetMapping("/bills/{userId}")
+    public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) {
 
         return billServices.getAllBillsByUserId(userId);
     }
 
-    @GetMapping("/lastBills")
+    @GetMapping("/lastBills/{userId}")
 
-    public Bill readLastBill(@RequestParam Long userId) {
+    public Bill readLastBill(@PathVariable(value = "userId") Long userId) {
 
         return billServices.getLastBillOfCurrentUser(userId);
 
