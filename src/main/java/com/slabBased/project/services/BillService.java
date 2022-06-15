@@ -12,5 +12,5 @@ public interface BillService {
     Bill getLastBillOfCurrentUser(Long userId);
     Bill getBillDetailsByBillId(long id);
     String addSlabPeriod(SlabPeriod slabPeriod);
-    String addSlab(Slabs slab);
+    String addSlab(Long SlabPeriodId,Slabs slab);
 }

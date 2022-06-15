@@ -32,18 +32,27 @@ public class BillServiceImpl implements BillService {
         return "SLAB PERIOD CREATED";
     }
 
-    public String addSlab(Slabs slab) {
-        Slabs slabs = new Slabs();
-        slabs.setId(slab.getId());
-        slabs.setStartRead(slab.getStartRead());
-        slabs.setEndRead(slab.getEndRead());
-        slabs.setSlabId(slabPeriodRepository.getLastPeriod().getId());
-        slabs.setSlabRate(slab.getSlabRate());
-        slabsRepository.save(slabs);
 
+    public String addSlab(Long slabPeriodId, Slabs slabRequest) {
+        try {
+            Slabs slabs = new Slabs();
+            slabs.setStartRead(slabRequest.getStartRead());
+            slabs.setEndRead(slabRequest.getEndRead());
+            slabs.setSlabRate(slabRequest.getSlabRate());
+            SlabPeriod slabPeriod1 = slabPeriodRepository.findAllById(slabPeriodId);
+            slabPeriod1.getSlabsSet().add(slabs);
+            slabPeriodRepository.save(slabPeriod1);
+        } catch (Exception e) {
+            System.out.println("Unable to SAVE");
+
+        }
         return "Slab Range And Rate Created";
 
 
+    }
+
+    public List<SlabPeriod> getAllSlabPeriod() {
+        return slabPeriodRepository.findAll();
     }
 
     public String BillCalculator(Bill bill) {
@@ -53,10 +62,9 @@ public class BillServiceImpl implements BillService {
         Bill finalBill = new Bill();
 
         List<SlabPeriod> periodList = new ArrayList<>(slabPeriodRepository.findAll());
-        if (periodList.isEmpty()){
-            resultOutput="Slab Rate not yet created";
-        }  else
-        {
+        if (periodList.isEmpty()) {
+            resultOutput = "Slab Rate not yet created";
+        } else {
 
             for (int i = 0; i < periodList.size(); i++) {
                 SlabPeriod slabPeriod1;
@@ -64,9 +72,9 @@ public class BillServiceImpl implements BillService {
                 slabPeriod1 = periodList.get(i);
                 BillCalculatorUtils periodCalc = new BillCalculatorUtils(slabPeriod1.getFromDate(), slabPeriod1.getToDate(), bill.getBillDate());
                 if (periodCalc.isWithinRange()) {
-                    List<Slabs> slabslist = new ArrayList<>(slabsRepository.getAllSlabsInCurrentPeriod(slabPeriod1.getId()));
-                    for (int j = 0; j < slabslist.size(); ) {
-                        slabs1 = slabslist.get(j);
+                    List<Slabs> slabsList = new ArrayList<>(slabsRepository.getAllSlabsInCurrentPeriod(slabPeriod1.getId()));
+                    for (int j = 0; j < slabsList.size(); ) {
+                        slabs1 = slabsList.get(j);
                         BillCalculatorUtils slabCalc = new BillCalculatorUtils(slabs1.getStartRead(), slabs1.getEndRead(), bill.getCurrentRead(), lastBill.getCurrentRead());
                         net = slabCalc.netUnitCalc(bill.getCurrentRead(), lastBill.getCurrentRead());
                         if (slabCalc.slabCheck()) {

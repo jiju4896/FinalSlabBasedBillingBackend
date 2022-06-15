@@ -31,22 +31,29 @@ public class BillsController {
     BillServiceImpl billServices;
 
 
-    //New API's
+    //New APIs
 
     @PostMapping("/slab-period/initializer")
-    public Object addSlabPeriod(@RequestBody SlabPeriod slabPeriod) {
+    public String addSlabPeriod(@RequestBody SlabPeriod slabPeriod) {
 
 
         return billServices.addSlabPeriod(slabPeriod);
     }
 
-    @PostMapping("/slab/initializer")
+    @PostMapping("{slabPeriodId}/slab/initializer")
     @ResponseStatus(HttpStatus.CREATED)
-    public Object addSlab(@RequestBody Slabs slab) {
+    public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId,@RequestBody Slabs slabRequest) {
 
 
-        return billServices.addSlab(slab);
+        return billServices.addSlab(slabPeriodId,slabRequest);
     }
+    @GetMapping("/read/slab-period")
+    public List<SlabPeriod> readAllSlabPeriod() {
+
+        return billServices.getAllSlabPeriod();
+    }
+
+
 
     @PostMapping("/bill/generator")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,7 +63,7 @@ public class BillsController {
     }
 
 
-    //OLD API's
+    //OLD APIs
     @GetMapping("/bills/{userId}")
     public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) {
 
