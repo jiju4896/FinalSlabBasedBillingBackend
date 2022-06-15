@@ -1,9 +1,12 @@
-package com.slabBased.project.services;
+package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
 import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
+import com.slabBased.project.services.Implementation.UserLoginRequestDtoServiceImpl;
+import com.slabBased.project.services.Implementation.UserLoginResponseDtoServiceImpl;
+import com.slabBased.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,19 +15,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServices {
+public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository uRepo;
     @Autowired
-    UserLoginRequestDtoServices userLoginDtoServices;
+    UserLoginRequestDtoServiceImpl userLoginDtoServices;
     @Autowired
-    UserLoginResponseDtoService userLoginResponseService;
+    UserLoginResponseDtoServiceImpl userLoginResponseService;
     String logCheck;
     Long userResponseId;
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String addUserAccount(User user) {
+   /* public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
             throw new RuntimeException("Username already exists");
         }
@@ -72,7 +75,7 @@ public class UserServices {
         }
 
         return userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
-    }
+    }*/
 
 
     public Boolean userNameCheck(String userName) {

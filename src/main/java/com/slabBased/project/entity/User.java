@@ -1,12 +1,9 @@
 package com.slabBased.project.entity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "tbl_user")
@@ -26,4 +23,7 @@ public class User {
 	private String password;
 	@Column(name="user_name",unique = true, nullable = false)
 	private String userName;
+	@ManyToMany(fetch=FetchType.EAGER,cascade = CascadeType.ALL)
+	@JoinTable(name ="tbl_user_role",joinColumns = {@JoinColumn (name = "USER_ID")},inverseJoinColumns = {@JoinColumn(name="ROLE_ID")})
+	private Set<Role> roles;
 }

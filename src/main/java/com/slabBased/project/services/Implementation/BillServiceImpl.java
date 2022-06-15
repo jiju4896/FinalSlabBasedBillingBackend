@@ -1,4 +1,4 @@
-package com.slabBased.project.services;
+package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.entity.Bill;
 import com.slabBased.project.entity.SlabPeriod;
@@ -6,6 +6,7 @@ import com.slabBased.project.entity.Slabs;
 import com.slabBased.project.repository.BillRepository;
 import com.slabBased.project.repository.SlabPeriodRepository;
 import com.slabBased.project.repository.SlabsRepository;
+import com.slabBased.project.services.BillService;
 import com.slabBased.project.utils.BillCalculatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BillServices {
+public class BillServiceImpl implements BillService {
     @Autowired
     BillRepository billRepository;
     @Autowired

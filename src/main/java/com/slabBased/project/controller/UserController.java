@@ -1,7 +1,7 @@
 package com.slabBased.project.controller;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
-import com.slabBased.project.services.UserServices;
+import com.slabBased.project.services.Implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,9 +21,9 @@ import com.slabBased.project.entity.User;
 public class UserController {
 
 	@Autowired
-	UserServices userServices;
+    UserServiceImpl userServices;
 
-	@PostMapping("/register")
+	/*@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Object addUser(@RequestBody User user) {
 
@@ -36,7 +36,7 @@ public class UserController {
 
 
 		return userServices.userLoginCheck(user);
-	}
+	}*/
 
 	@GetMapping("/username/check")
 	public Boolean userNameCheck(@RequestParam String userName) {
