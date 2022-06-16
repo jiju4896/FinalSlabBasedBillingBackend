@@ -1,5 +1,8 @@
 package com.slabBased.project.services;
 
+import com.slabBased.project.entity.Role;
+
 public interface UserService {
-    public Boolean userNameCheck(String userName);
+     Boolean userNameCheck(String userName);
+    String addRole(Long userId, Role roleRequest);
 }

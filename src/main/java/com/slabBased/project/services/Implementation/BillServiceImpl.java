@@ -8,11 +8,11 @@ import com.slabBased.project.repository.SlabPeriodRepository;
 import com.slabBased.project.repository.SlabsRepository;
 import com.slabBased.project.services.BillService;
 import com.slabBased.project.utils.BillCalculatorUtils;
+import com.slabBased.project.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -22,9 +22,11 @@ public class BillServiceImpl implements BillService {
     SlabsRepository slabsRepository;
     @Autowired
     SlabPeriodRepository slabPeriodRepository;
+
+
     Double finalAmount = 0.0;
     Double net, sRate;
-    Slabs slabs1;
+
     String resultOutput = " ";
 
     public String addSlabPeriod(SlabPeriod slabPeriod) {
@@ -46,7 +48,11 @@ public class BillServiceImpl implements BillService {
             System.out.println("Unable to SAVE");
 
         }
-        return "Slab Range And Rate Created";
+        Map<String, Object> claims = new HashMap<>();
+        String userName = "Slab Range And Rate Created";
+        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+        
+        return jwtTokenUtil.doGenerateToken(claims, userName);
 
 
     }
@@ -66,22 +72,23 @@ public class BillServiceImpl implements BillService {
             resultOutput = "Slab Rate not yet created";
         } else {
 
-            for (int i = 0; i < periodList.size(); i++) {
-                SlabPeriod slabPeriod1;
+            for (SlabPeriod slabPeriod1: periodList) {
 
-                slabPeriod1 = periodList.get(i);
                 BillCalculatorUtils periodCalc = new BillCalculatorUtils(slabPeriod1.getFromDate(), slabPeriod1.getToDate(), bill.getBillDate());
                 if (periodCalc.isWithinRange()) {
-                    List<Slabs> slabsList = new ArrayList<>(slabsRepository.getAllSlabsInCurrentPeriod(slabPeriod1.getId()));
-                    for (int j = 0; j < slabsList.size(); ) {
-                        slabs1 = slabsList.get(j);
+                    Set<Slabs> slabsList = slabPeriod1.getSlabsSet();
+                    for (Slabs slabs1 : slabsList) {
+
                         BillCalculatorUtils slabCalc = new BillCalculatorUtils(slabs1.getStartRead(), slabs1.getEndRead(), bill.getCurrentRead(), lastBill.getCurrentRead());
-                        net = slabCalc.netUnitCalc(bill.getCurrentRead(), lastBill.getCurrentRead());
+                        if (lastBill.getCurrentRead()==null){
+                            net=slabCalc.netUnitCalc(bill.getCurrentRead(),0.0);
+                        }else{
+                        net = slabCalc.netUnitCalc(bill.getCurrentRead(), lastBill.getCurrentRead());}
                         if (slabCalc.slabCheck()) {
                             sRate = slabs1.getSlabRate();
                             BillCalculatorUtils calculation = new BillCalculatorUtils(slabs1.getSlabRate());
                             finalAmount = calculation.billGenerator(net, sRate);
-                            resultOutput = "Bill with Total Amount: " + finalAmount + " at a SlabRate of " + sRate + " is Generated";
+                            resultOutput = "Bill with Total Amount: " + finalAmount + " at a SlabRate of " + sRate + "for NetUnit "+net+"  is Generated";
                             finalBill.setBillAmount(finalAmount);
                             finalBill.setCurrentRead(bill.getCurrentRead());
                             finalBill.setNetUnit(net);
@@ -93,7 +100,7 @@ public class BillServiceImpl implements BillService {
 
                         } else {
                             resultOutput = "Slab Rate For This Range in this Period is Not Defined!";
-                            j++;
+
                         }
 
 
@@ -101,7 +108,7 @@ public class BillServiceImpl implements BillService {
 
                 } else {
                     resultOutput = "Slab Rate for This Period is not Defined!";
-                    i++;
+
                 }
             }
         }

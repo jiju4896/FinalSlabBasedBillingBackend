@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.slabBased.project.entity.User;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends  JpaRepository<User, Long>{
 	@Query(value = "SELECT * FROM tbl_user WHERE  user_name = :userName   ", nativeQuery = true)
@@ -15,5 +17,8 @@ public interface UserRepository extends  JpaRepository<User, Long>{
 
 	boolean existsByUserName(String userName);
 
-	
+
+    User findAllById(Long userId);
+
+
 }

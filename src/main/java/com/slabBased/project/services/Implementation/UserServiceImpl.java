@@ -1,11 +1,9 @@
 package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
-import com.slabBased.project.Dto.UserLoginResponseDto;
+import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
-import com.slabBased.project.services.Implementation.UserLoginRequestDtoServiceImpl;
-import com.slabBased.project.services.Implementation.UserLoginResponseDtoServiceImpl;
 import com.slabBased.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,10 +22,11 @@ public class UserServiceImpl implements UserService {
     UserLoginResponseDtoServiceImpl userLoginResponseService;
     String logCheck;
     Long userResponseId;
+
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-   /* public String addUserAccount(User user) {
+   public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
             throw new RuntimeException("Username already exists");
         }
@@ -38,6 +37,10 @@ public class UserServiceImpl implements UserService {
         usr.setFirstName(user.getFirstName());
         usr.setLastName(user.getLastName());
         usr.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role=new Role();
+        role.setRoleName("USER");
+        role.setRoleDescription("This user has only user rights!!");
+        usr.getRoles().add(role);
 
         uRepo.save(usr);
 
@@ -45,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
+
+
+/*
     public UserLoginResponseDto userLoginCheck(UserLoginRequestDto userRequest) {
 
 
@@ -89,4 +95,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public String addRole(Long userId, Role roleRequest) {
+        try {
+            Role role=new Role();
+            role.setRoleName(roleRequest.getRoleName());
+            role.setRoleDescription(roleRequest.getRoleDescription());
+            User user=uRepo.findAllById(userId);
+            user.getRoles().add(role);
+            uRepo.save(user);
+
+        } catch (Exception e) {
+            System.out.println("Unable to SAVE");
+
+        }
+        return "New Role Added";
+    }
 }

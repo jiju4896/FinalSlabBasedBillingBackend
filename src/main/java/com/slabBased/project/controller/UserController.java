@@ -1,18 +1,15 @@
 package com.slabBased.project.controller;
 
-import com.slabBased.project.Dto.UserLoginRequestDto;
+import com.slabBased.project.Dto.UserDto;
+import com.slabBased.project.entity.Role;
+import com.slabBased.project.services.Implementation.UserDtoServicesImpl;
 import com.slabBased.project.services.Implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.slabBased.project.entity.User;
+
+import java.util.List;
 
 
 @RestController
@@ -22,13 +19,23 @@ public class UserController {
 
 	@Autowired
     UserServiceImpl userServices;
+	@Autowired
+	UserDtoServicesImpl userDtoServices;
 
-	/*@PostMapping("/register")
+	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Object addUser(@RequestBody User user) {
 
 		return userServices.addUserAccount(user);
 	}
+
+	@GetMapping("get-all/users")
+	public List<UserDto> getAllUsers(){
+		return userDtoServices.getUserDetails();
+
+	}
+
+/*
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -38,6 +45,13 @@ public class UserController {
 		return userServices.userLoginCheck(user);
 	}*/
 
+	@PutMapping("{userId}/role")
+	@ResponseStatus(HttpStatus.CREATED)
+	public String addRole(@PathVariable(value = "userId") Long userId, @RequestBody Role roleRequest) {
+
+
+		return userServices.addRole(userId,roleRequest);
+	}
 	@GetMapping("/username/check")
 	public Boolean userNameCheck(@RequestParam String userName) {
 
