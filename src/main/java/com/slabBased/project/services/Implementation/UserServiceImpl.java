@@ -1,16 +1,22 @@
 package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
+import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserService;
+import com.slabBased.project.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,7 +32,7 @@ public class UserServiceImpl implements UserService {
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-   public String addUserAccount(User user) {
+    public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
             throw new RuntimeException("Username already exists");
         }
@@ -37,7 +43,7 @@ public class UserServiceImpl implements UserService {
         usr.setFirstName(user.getFirstName());
         usr.setLastName(user.getLastName());
         usr.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role=new Role();
+        Role role = new Role();
         role.setRoleName("USER");
         role.setRoleDescription("This user has only user rights!!");
         usr.getRoles().add(role);
@@ -49,9 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-/*
-    public UserLoginResponseDto userLoginCheck(UserLoginRequestDto userRequest) {
+    public String userLoginCheck(UserLoginRequestDto userRequest) {
 
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
@@ -80,8 +84,14 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        return userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
-    }*/
+        UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("logResponse", userLoginResponseDto);
+
+        String userName = userRequest.getUserName();
+        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+        return jwtTokenUtil.doGenerateToken(claims, userName);
+    }
 
 
     public Boolean userNameCheck(String userName) {
@@ -94,13 +104,29 @@ public class UserServiceImpl implements UserService {
         return userFound;
     }
 
+    public String deleteUserRole(Long userId, Long roleId) {
+        String result;
+        User user = uRepo.findAllById(userId);
+        Set<Role> roleSet = user.getRoles();
+        boolean role = roleSet.removeIf(role1 -> role1.getId() .equals(roleId));
+        user.setRoles(roleSet);
+        uRepo.save(user);
+        if(role){
+             result="role Deleted";
+        }else{
+            result="unable to delete try later";
+        }
+
+
+        return result ;
+    }
 
     public String addRole(Long userId, Role roleRequest) {
         try {
-            Role role=new Role();
+            Role role = new Role();
             role.setRoleName(roleRequest.getRoleName());
             role.setRoleDescription(roleRequest.getRoleDescription());
-            User user=uRepo.findAllById(userId);
+            User user = uRepo.findAllById(userId);
             user.getRoles().add(role);
             uRepo.save(user);
 
@@ -109,5 +135,20 @@ public class UserServiceImpl implements UserService {
 
         }
         return "New Role Added";
+    }
+
+    public String deleteUserByTheId(Long userId) {
+        uRepo.deleteById(userId);
+        return "User Deleted";
+    }
+
+    public String modifyUser(Long userId, User userRequest) {
+        User usr = uRepo.findAllById(userId);
+        usr.setFirstName(userRequest.getFirstName());
+        usr.setLastName(userRequest.getLastName());
+        usr.setPassword(userRequest.getPassword());
+        usr.setEmail(userRequest.getEmail());
+        uRepo.save(usr);
+        return "User Updated";
     }
 }

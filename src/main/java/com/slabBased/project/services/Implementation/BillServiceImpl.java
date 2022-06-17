@@ -8,7 +8,6 @@ import com.slabBased.project.repository.SlabPeriodRepository;
 import com.slabBased.project.repository.SlabsRepository;
 import com.slabBased.project.services.BillService;
 import com.slabBased.project.utils.BillCalculatorUtils;
-import com.slabBased.project.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,11 +47,9 @@ public class BillServiceImpl implements BillService {
             System.out.println("Unable to SAVE");
 
         }
-        Map<String, Object> claims = new HashMap<>();
-        String userName = "Slab Range And Rate Created";
-        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+
         
-        return jwtTokenUtil.doGenerateToken(claims, userName);
+       return "Slab Range And Rate Created";
 
 
     }

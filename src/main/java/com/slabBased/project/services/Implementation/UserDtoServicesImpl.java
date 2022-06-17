@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 public class UserDtoServicesImpl implements UserDtoService {
     @Autowired
@@ -18,11 +19,11 @@ public class UserDtoServicesImpl implements UserDtoService {
     @Autowired
     private ModelMapper modelMapper;
 
-    private UserDto entityToDtoConversion(User user){
+    private UserDto entityToDtoConversion(User user) {
         return modelMapper.map(user, UserDto.class);
     }
 
-    public List<UserDto> getUserDetails(){
+    public List<UserDto> getUserDetails() {
         return uRepo.findAll().stream().map(this::entityToDtoConversion).collect(Collectors.toList());
 
 

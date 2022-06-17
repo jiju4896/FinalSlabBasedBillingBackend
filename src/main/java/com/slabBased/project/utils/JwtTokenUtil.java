@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JwtTokenUtil implements Serializable {
-    @Value("${jwt.secret}")
-    private String secret;
+    //@Value("${jwt.secret}")
+    private  final String secret ="asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
 
     private static final long timeValidity=60*60*2;
 
