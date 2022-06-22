@@ -3,9 +3,10 @@ package com.slabBased.project.services.Implementation;
 import com.slabBased.project.entity.Bill;
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
+import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.BillRepository;
 import com.slabBased.project.repository.SlabPeriodRepository;
-import com.slabBased.project.repository.SlabsRepository;
+import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.BillService;
 import com.slabBased.project.utils.BillCalculatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class BillServiceImpl implements BillService {
     @Autowired
     BillRepository billRepository;
     @Autowired
-    SlabsRepository slabsRepository;
+    UserRepository userRepository;
     @Autowired
     SlabPeriodRepository slabPeriodRepository;
 
@@ -48,8 +49,8 @@ public class BillServiceImpl implements BillService {
 
         }
 
-        
-       return "Slab Range And Rate Created";
+
+        return "Slab Range And Rate Created";
 
 
     }
@@ -60,8 +61,14 @@ public class BillServiceImpl implements BillService {
 
     public String BillCalculator(Bill bill) {
 
-        Bill lastBill;
+        Bill lastBill, finalLastBill = new Bill();
         lastBill = billRepository.getLastBillDetails(bill.getUserId());
+        if (lastBill == null) {
+            finalLastBill.setCurrentRead(0.0);
+
+        } else {
+            finalLastBill.setCurrentRead(lastBill.getCurrentRead());
+        }
         Bill finalBill = new Bill();
 
         List<SlabPeriod> periodList = new ArrayList<>(slabPeriodRepository.findAll());
@@ -69,30 +76,32 @@ public class BillServiceImpl implements BillService {
             resultOutput = "Slab Rate not yet created";
         } else {
 
-            for (SlabPeriod slabPeriod1: periodList) {
+            for (SlabPeriod slabPeriod1 : periodList) {
 
                 BillCalculatorUtils periodCalc = new BillCalculatorUtils(slabPeriod1.getFromDate(), slabPeriod1.getToDate(), bill.getBillDate());
                 if (periodCalc.isWithinRange()) {
                     Set<Slabs> slabsList = slabPeriod1.getSlabsSet();
                     for (Slabs slabs1 : slabsList) {
 
-                        BillCalculatorUtils slabCalc = new BillCalculatorUtils(slabs1.getStartRead(), slabs1.getEndRead(), bill.getCurrentRead(), lastBill.getCurrentRead());
-                        if (lastBill.getCurrentRead()==null){
-                            net=slabCalc.netUnitCalc(bill.getCurrentRead(),0.0);
-                        }else{
-                        net = slabCalc.netUnitCalc(bill.getCurrentRead(), lastBill.getCurrentRead());}
+                        BillCalculatorUtils slabCalc = new BillCalculatorUtils(slabs1.getStartRead(), slabs1.getEndRead(), bill.getCurrentRead(), finalLastBill.getCurrentRead());
+
+                        net = slabCalc.netUnitCalc(bill.getCurrentRead(), finalLastBill.getCurrentRead());
                         if (slabCalc.slabCheck()) {
                             sRate = slabs1.getSlabRate();
                             BillCalculatorUtils calculation = new BillCalculatorUtils(slabs1.getSlabRate());
                             finalAmount = calculation.billGenerator(net, sRate);
-                            resultOutput = "Bill with Total Amount: " + finalAmount + " at a SlabRate of " + sRate + "for NetUnit "+net+"  is Generated";
+                            resultOutput = "Bill with Total Amount: " + finalAmount + " at a SlabRate of " + sRate + "for NetUnit " + net + "  is Generated";
                             finalBill.setBillAmount(finalAmount);
                             finalBill.setCurrentRead(bill.getCurrentRead());
                             finalBill.setNetUnit(net);
                             finalBill.setSlabRate(sRate);
                             finalBill.setUserId(bill.getUserId());
                             finalBill.setBillDate(bill.getBillDate());
-                            billRepository.save(finalBill);
+                            User usr = userRepository.findAllById(bill.getUserId());
+                            usr.getBill().add(finalBill);
+                            userRepository.save(usr);
+
+
                             break;
 
                         } else {

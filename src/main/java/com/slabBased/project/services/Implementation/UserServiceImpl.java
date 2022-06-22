@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
 
     public String userLoginCheck(UserLoginRequestDto userRequest) {
+        String outputResponse=" ";
 
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
             if (usrLoginRequestDto.getUserName().equals(userRequest.getUserName())) {
 
                 if (!(passwordEncoder.matches(userRequest.getPassword(), usrLoginRequestDto.getPassword()))) {
-                    logCheck = "Invalid Password";
+                    outputResponse = "Invalid Password";
                     userResponseId = null;
                     //throw new RuntimeException("Invalid Password");
 
@@ -71,26 +72,29 @@ public class UserServiceImpl implements UserService {
                 } else {
                     logCheck = "Access Granted!";
                     userResponseId = userLoginResponseService.getUserIdForResponse(userRequest.getUserName());
+                    UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
+                    Map<String, Object> claims = new HashMap<>();
+                    claims.put("logResponse", userLoginResponseDto);
+
+                    String userName = userRequest.getUserName();
+                    JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+                    outputResponse=jwtTokenUtil.doGenerateToken(claims, userName);
+
                     break;
                 }
 
             } else {
 
-                logCheck = "Invalid Username";
+                outputResponse = "Invalid Username ";
                 userResponseId = null;
-                //throw new RuntimeException("Invalid Username ");
+               throw new RuntimeException("Invalid Username ");
 
             }
 
         }
 
-        UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("logResponse", userLoginResponseDto);
 
-        String userName = userRequest.getUserName();
-        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
-        return jwtTokenUtil.doGenerateToken(claims, userName);
+        return outputResponse;
     }
 
 

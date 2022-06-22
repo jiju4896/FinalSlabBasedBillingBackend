@@ -1,23 +1,17 @@
 package com.slabBased.project.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
 
 @Entity
 @Table(name = "tbl_bill_storage")
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -41,4 +35,54 @@ public class Bill {
     private Double billAmount;
     @Column(name = "user_id")
     private Long userId;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(Date billDate) {
+        this.billDate = billDate;
+    }
+
+    public Double getCurrentRead() {
+        return currentRead;
+    }
+
+    public void setCurrentRead(Double currentRead) {
+        this.currentRead = currentRead;
+    }
+
+
+    public void setNetUnit(Double netUnit) {
+        this.netUnit = netUnit;
+    }
+
+
+    public void setSlabRate(Double slabRate) {
+        this.slabRate = slabRate;
+    }
+
+
+    public void setBillAmount(Double billAmount) {
+        this.billAmount = billAmount;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+
 }

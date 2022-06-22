@@ -1,14 +1,20 @@
 package com.slabBased.project.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "tbl_user")
-
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,9 +30,27 @@ public class User {
     private String password;
     @Column(name = "user_name", unique = true, nullable = false)
     private String userName;
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Bill> bill = new ArrayList<>();
+
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "tbl_user_role", joinColumns = {@JoinColumn(name = "USER_ID")}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
+
     private Set<Role> roles = new HashSet<>();
+
+    public User(Long id, String firstName, String lastName, String email, String password, String userName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+    }
+
+    public List<Bill> getBill() {
+        return bill;
+    }
 
     public Long getId() {
         return id;

@@ -1,15 +1,11 @@
 package com.slabBased.project.controller;
 
 import java.util.List;
-
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
-
 import com.slabBased.project.services.Implementation.BillServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,17 +38,17 @@ public class BillsController {
 
     @PostMapping("{slabPeriodId}/slab/initializer")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId,@RequestBody Slabs slabRequest) {
+    public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId, @RequestBody Slabs slabRequest) {
 
 
-        return billServices.addSlab(slabPeriodId,slabRequest);
+        return billServices.addSlab(slabPeriodId, slabRequest);
     }
+
     @GetMapping("/read/slab-period")
     public List<SlabPeriod> readAllSlabPeriod() {
 
         return billServices.getAllSlabPeriod();
     }
-
 
 
     @PostMapping("/bill/generator")

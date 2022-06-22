@@ -1,17 +1,14 @@
 package com.slabBased.project.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+
 
 @Entity
-@Table(name="tbl_slabs")
+@Table(name = "tbl_slabs")
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,9 +24,7 @@ public class Slabs {
     private Double endRead;
     @Column(name = "slab_rate")
     private Double slabRate;
-    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE},mappedBy = "slabsSet")
-    @JsonIgnore
-    private Set<SlabPeriod> slabPeriodSet = new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -63,11 +58,5 @@ public class Slabs {
         this.slabRate = slabRate;
     }
 
-    public Set<SlabPeriod> getSlabPeriodSet() {
-        return slabPeriodSet;
-    }
 
-    public void setSlabPeriodSet(Set<SlabPeriod> slabPeriodSet) {
-        this.slabPeriodSet = slabPeriodSet;
-    }
 }
