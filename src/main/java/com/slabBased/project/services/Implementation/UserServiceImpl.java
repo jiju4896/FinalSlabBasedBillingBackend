@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.RoleNotFoundException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +26,21 @@ public class UserServiceImpl implements UserService {
     UserLoginRequestDtoServiceImpl userLoginDtoServices;
     @Autowired
     UserLoginResponseDtoServiceImpl userLoginResponseService;
+
+
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
     String logCheck;
     Long userResponseId;
 
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserServiceImpl(UserRepository uRepo) {
+    public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
         this.uRepo = uRepo;
+        this.userLoginDtoServices = userLoginRequestDtoService;
+        this.userLoginResponseService = userLoginResponseService;
+
     }
 
     public String addUserAccount(User user) {
@@ -60,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
 
     public String userLoginCheck(UserLoginRequestDto userRequest) {
-        String outputResponse=" ";
+        String outputResponse = " ";
 
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
@@ -74,15 +81,16 @@ public class UserServiceImpl implements UserService {
 
 
                 } else {
-                    logCheck = "Access Granted!";
+
                     userResponseId = userLoginResponseService.getUserIdForResponse(userRequest.getUserName());
+                    logCheck = "Access Granted!";
                     UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
                     Map<String, Object> claims = new HashMap<>();
                     claims.put("logResponse", userLoginResponseDto);
 
                     String userName = userRequest.getUserName();
-                    JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
-                    outputResponse=jwtTokenUtil.doGenerateToken(claims, userName);
+
+                    outputResponse = jwtTokenUtil.doGenerateToken(claims, userName);
 
                     break;
                 }
@@ -91,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
                 outputResponse = "Invalid Username ";
                 userResponseId = null;
-               throw new RuntimeException("Invalid Username ");
+                // throw new RuntimeException("Invalid Username ");
 
             }
 
@@ -116,17 +124,17 @@ public class UserServiceImpl implements UserService {
         String result;
         User user = uRepo.findAllById(userId);
         Set<Role> roleSet = user.getRoles();
-        boolean role = roleSet.removeIf(role1 -> role1.getId() .equals(roleId));
+        boolean role = roleSet.removeIf(role1 -> role1.getId().equals(roleId));
         user.setRoles(roleSet);
         uRepo.save(user);
-        if(role){
-             result="role Deleted";
-        }else{
-            result="unable to delete try later";
+        if (role) {
+            result = "role Deleted";
+        } else {
+            result = "unable to delete try later";
         }
 
 
-        return result ;
+        return result;
     }
 
     public String addRole(Long userId, Role roleRequest) {
