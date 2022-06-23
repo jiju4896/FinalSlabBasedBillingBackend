@@ -1,5 +1,6 @@
 package com.slabBased.project.services.Implementation;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.slabBased.project.entity.Bill;
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
@@ -24,13 +25,23 @@ public class BillServiceImpl implements BillService {
     SlabPeriodRepository slabPeriodRepository;
 
 
+
     Double finalAmount = 0.0;
     Double net, sRate;
 
     String resultOutput = " ";
+    public BillServiceImpl(BillRepository billRepository, UserRepository userRepository, SlabPeriodRepository slabPeriodRepository) {
+        this.billRepository = billRepository;
+        this.userRepository = userRepository;
+        this.slabPeriodRepository = slabPeriodRepository;
+    }
 
     public String addSlabPeriod(SlabPeriod slabPeriod) {
-        slabPeriodRepository.save(slabPeriod);
+        try {
+            slabPeriodRepository.save(slabPeriod);
+        }catch(Exception e){
+            System.out.println("Unable to Save");
+        }
         return "SLAB PERIOD CREATED";
     }
 
@@ -59,7 +70,7 @@ public class BillServiceImpl implements BillService {
         return slabPeriodRepository.findAll();
     }
 
-    public String BillCalculator(Bill bill) {
+    public String billCalculator(Bill bill) {
 
         Bill lastBill, finalLastBill = new Bill();
         lastBill = billRepository.getLastBillDetails(bill.getUserId());

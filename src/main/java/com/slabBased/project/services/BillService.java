@@ -7,7 +7,7 @@ import com.slabBased.project.entity.Slabs;
 import java.util.List;
 
 public interface BillService {
-    String BillCalculator(Bill bill);
+    String billCalculator(Bill bill);
     List<Bill> getAllBillsByUserId(Long userId);
     Bill getLastBillOfCurrentUser(Long userId);
     Bill getBillDetailsByBillId(long id);

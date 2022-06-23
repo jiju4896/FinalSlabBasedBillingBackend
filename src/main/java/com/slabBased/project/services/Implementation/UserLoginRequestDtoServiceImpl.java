@@ -18,6 +18,10 @@ public class UserLoginRequestDtoServiceImpl implements UserLoginRequestDtoServic
     @Autowired
     private ModelMapper modelMapper;
 
+    public UserLoginRequestDtoServiceImpl(UserRepository userRepository) {
+        this.uRepo=userRepository;
+    }
+
     private UserLoginRequestDto entityToDtoConversion(User user){
         return modelMapper.map(user, UserLoginRequestDto.class);
     }

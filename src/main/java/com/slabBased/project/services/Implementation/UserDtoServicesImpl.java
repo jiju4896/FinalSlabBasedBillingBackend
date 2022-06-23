@@ -19,6 +19,10 @@ public class UserDtoServicesImpl implements UserDtoService {
     @Autowired
     private ModelMapper modelMapper;
 
+    public UserDtoServicesImpl(UserRepository uRepo) {
+        this.uRepo = uRepo;
+    }
+
     private UserDto entityToDtoConversion(User user) {
         return modelMapper.map(user, UserDto.class);
     }

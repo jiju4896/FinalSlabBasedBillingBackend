@@ -12,8 +12,6 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends  JpaRepository<User, Long>{
-	@Query(value = "SELECT * FROM tbl_user WHERE  user_name = :userName   ", nativeQuery = true)
-	String getByPassword(@Param("userName") String userName);
 
 	boolean existsByUserName(String userName);
 
@@ -21,5 +19,7 @@ public interface UserRepository extends  JpaRepository<User, Long>{
     User findAllById(Long userId);
 
 	@Override
-	void deleteById(Long aLong);
+	void deleteById(Long Id);
+
+	User findAllByUserName(String userName);
 }

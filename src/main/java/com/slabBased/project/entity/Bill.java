@@ -36,6 +36,19 @@ public class Bill {
     @Column(name = "user_id")
     private Long userId;
 
+    public Bill(Date billDate, Double currentRead, Long userId) {
+        this.billDate = billDate;
+        this.currentRead = currentRead;
+        this.userId = userId;
+    }
+
+    public Bill(Long id, Double currentRead, Double netUnit, Double slabRate, Double billAmount) {
+        this.id = id;
+        this.currentRead = currentRead;
+        this.netUnit = netUnit;
+        this.slabRate = slabRate;
+        this.billAmount = billAmount;
+    }
 
     public Long getId() {
         return id;

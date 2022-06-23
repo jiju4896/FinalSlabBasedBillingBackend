@@ -32,6 +32,10 @@ public class UserServiceImpl implements UserService {
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    public UserServiceImpl(UserRepository uRepo) {
+        this.uRepo = uRepo;
+    }
+
     public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
             throw new RuntimeException("Username already exists");

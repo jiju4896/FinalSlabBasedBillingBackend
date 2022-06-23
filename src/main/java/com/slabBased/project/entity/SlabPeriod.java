@@ -28,6 +28,11 @@ public class SlabPeriod {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Slabs> slabsSet = new HashSet<>();
 
+    public SlabPeriod(Long id, Date fromDate, Date toDate) {
+        this.id = id;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+    }
 
     public Long getId() {
         return id;

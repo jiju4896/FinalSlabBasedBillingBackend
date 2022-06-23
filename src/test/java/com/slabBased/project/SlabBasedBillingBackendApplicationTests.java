@@ -1,13 +1,16 @@
 package com.slabBased.project;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.boot.test.context.SpringBootTest;
 
+
+
 @SpringBootTest
-class SlabBasedBillingBackendApplicationTests {
+public class SlabBasedBillingBackendApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
 
 }

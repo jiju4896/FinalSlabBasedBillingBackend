@@ -18,6 +18,10 @@ public class UserLoginResponseDtoServiceImpl implements UserLoginResponseDtoServ
     @Autowired
     private ModelMapper modelMapper;
 
+    public UserLoginResponseDtoServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     Long userId;
     private UserLoginResponseDto entityToDtoConversion(User user){
 

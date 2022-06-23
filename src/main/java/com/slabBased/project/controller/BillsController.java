@@ -55,7 +55,7 @@ public class BillsController {
     @ResponseStatus(HttpStatus.CREATED)
     public String billGeneration(@RequestBody Bill bill) {
 
-        return billServices.BillCalculator(bill);
+        return billServices.billCalculator(bill);
     }
 
 
