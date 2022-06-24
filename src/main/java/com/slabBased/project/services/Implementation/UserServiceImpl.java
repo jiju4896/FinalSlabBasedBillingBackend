@@ -6,20 +6,22 @@ import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserService;
-import com.slabBased.project.utils.JwtTokenUtil;
+import com.slabBased.project.configuration.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-@Service
-public class UserServiceImpl implements UserService {
+
+@Service(value = "userService")
+public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     UserRepository uRepo;
     @Autowired
@@ -33,6 +35,25 @@ public class UserServiceImpl implements UserService {
 
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public UserDetails loadUserByUsername(String userName)throws UsernameNotFoundException{
+
+        User user = uRepo.findAllByUserName(userName);
+        if(user == null){
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),  getAuthority(user));
+    }
+
+    private Set<SimpleGrantedAuthority> getAuthority(User user) {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName())));
+        return authorities;
+
+
+
+       }
 
     public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
         this.uRepo = uRepo;
@@ -68,7 +89,7 @@ public class UserServiceImpl implements UserService {
         String outputResponse = " ";
         String accessToken = null;
         userResponseId = null;
-        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
         UserLoginResponseDto finalUserLoginResponseDto = new UserLoginResponseDto();
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
@@ -92,7 +113,7 @@ public class UserServiceImpl implements UserService {
                     String userName = userRequest.getUserName();
 
                     outputResponse = "Access Granted!";
-                    accessToken = jwtTokenUtil.doGenerateToken(claims, userName);
+                    accessToken = jwtTokenProvider.doGenerateToken(claims, userName);
 
                     break;
                 }

@@ -12,4 +12,8 @@ public class UserLoginResponseDto {
     private String loginResponse;
     private String userName;
     private Long userId;
+
+    public UserLoginResponseDto(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

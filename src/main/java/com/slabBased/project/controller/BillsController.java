@@ -1,11 +1,13 @@
 package com.slabBased.project.controller;
 
 import java.util.List;
+
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
 import com.slabBased.project.services.Implementation.BillServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,7 @@ public class BillsController {
 
 
     //New APIs
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/slab-period/initializer")
     public String addSlabPeriod(@RequestBody SlabPeriod slabPeriod) {
 
@@ -36,6 +38,7 @@ public class BillsController {
         return billServices.addSlabPeriod(slabPeriod);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("{slabPeriodId}/slab/initializer")
     @ResponseStatus(HttpStatus.CREATED)
     public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId, @RequestBody Slabs slabRequest) {
@@ -44,13 +47,14 @@ public class BillsController {
         return billServices.addSlab(slabPeriodId, slabRequest);
     }
 
+    @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/read/slab-period")
     public List<SlabPeriod> readAllSlabPeriod() {
 
         return billServices.getAllSlabPeriod();
     }
 
-
+    @PreAuthorize("hasRole('ADMIN','USER')")
     @PostMapping("/bill/generator")
     @ResponseStatus(HttpStatus.CREATED)
     public String billGeneration(@RequestBody Bill bill) {
@@ -60,12 +64,14 @@ public class BillsController {
 
 
     //OLD APIs
+    @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/bills/{userId}")
     public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) {
 
         return billServices.getAllBillsByUserId(userId);
     }
 
+    @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/lastBills/{userId}")
 
     public Bill readLastBill(@PathVariable(value = "userId") Long userId) {
@@ -74,6 +80,7 @@ public class BillsController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/bill/{id}")
     public Bill getBillById(@PathVariable(value = "id") long id) {
         return billServices.getBillDetailsByBillId(id);
