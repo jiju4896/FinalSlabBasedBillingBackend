@@ -5,20 +5,16 @@ import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
-import com.slabBased.project.utils.JwtTokenUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -112,19 +108,19 @@ class UserServiceImplTest {
 
         UserLoginRequestDto userLoginRequestDto = new UserLoginRequestDto("saji122", "1254");
 
-        String callingUserLoginCheckUpMethodWhenUserNameAndPasswordExists = userService.userLoginCheck(userLoginRequestDto);
+        UserLoginResponseDto callingUserLoginCheckUpMethodWhenUserNameAndPasswordExists = userService.userLoginCheck(userLoginRequestDto);
         when(userLoginRequestDtoService.getUserLoginDetails()).thenReturn(userList);
         verify(userLoginRequestDtoService, times(1)).getUserLoginDetails();
         //verify(userLoginResponseDtoService,times(1)).getUserIdForResponse(userLoginRequestDto.getUserName());
 
 
         UserLoginRequestDto userLoginRequestWithInvalidUserName = new UserLoginRequestDto("Laji12", "1254");
-        String callingUserLoginMatchWhenUserNameDoesnotExist=userService.userLoginCheck(userLoginRequestWithInvalidUserName);
-        assertEquals("Invalid Username ",callingUserLoginMatchWhenUserNameDoesnotExist);
+     UserLoginResponseDto callingUserLoginMatchWhenUserNameDoesnotExist=userService.userLoginCheck(userLoginRequestWithInvalidUserName);
+        assertEquals("Invalid Username ",callingUserLoginMatchWhenUserNameDoesnotExist.getLoginResponse());
 
         UserLoginRequestDto userLoginRequestWithIncorrectPassword= new UserLoginRequestDto("saji122", "12547");
-        String callingUserLoginMatchWhenPasswordIsIncorrect=userService.userLoginCheck(userLoginRequestWithIncorrectPassword);
-        assertEquals("Invalid Password",callingUserLoginMatchWhenPasswordIsIncorrect);
+       UserLoginResponseDto callingUserLoginMatchWhenPasswordIsIncorrect=userService.userLoginCheck(userLoginRequestWithIncorrectPassword);
+        assertEquals("Invalid Password",callingUserLoginMatchWhenPasswordIsIncorrect.getLoginResponse());
 
     }
 

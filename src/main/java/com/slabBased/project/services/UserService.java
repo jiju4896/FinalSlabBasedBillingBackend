@@ -1,6 +1,7 @@
 package com.slabBased.project.services;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
+import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     String addUserAccount(User user);
 
-    String userLoginCheck(UserLoginRequestDto userRequest);
+    UserLoginResponseDto userLoginCheck(UserLoginRequestDto userRequest);
 
     String deleteUserByTheId(Long userId);
 

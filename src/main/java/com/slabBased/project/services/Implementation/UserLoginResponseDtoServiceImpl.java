@@ -39,7 +39,7 @@ public class UserLoginResponseDtoServiceImpl implements UserLoginResponseDtoServ
 
         for (UserLoginResponseDto userLoginResponseDto : idList) {
             if (userLoginResponseDto.getUserName().equals(userName)) {
-                userId = userLoginResponseDto.getId();
+                userId = userLoginResponseDto.getUserId();
             }
         }
 
@@ -49,7 +49,7 @@ public class UserLoginResponseDtoServiceImpl implements UserLoginResponseDtoServ
         UserLoginResponseDto userLoginResponse = new UserLoginResponseDto();
         userLoginResponse.setUserName(userName);
         userLoginResponse.setLoginResponse(logCheck);
-        userLoginResponse.setId(userResponseId);
+        userLoginResponse.setUserId(userResponseId);
         return userLoginResponse;
 
     }

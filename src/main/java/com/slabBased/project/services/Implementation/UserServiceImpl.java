@@ -28,8 +28,6 @@ public class UserServiceImpl implements UserService {
     UserLoginResponseDtoServiceImpl userLoginResponseService;
 
 
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
     String logCheck;
     Long userResponseId;
 
@@ -66,9 +64,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public String userLoginCheck(UserLoginRequestDto userRequest) {
+    public UserLoginResponseDto userLoginCheck(UserLoginRequestDto userRequest) {
         String outputResponse = " ";
-
+        String accessToken = null;
+        userResponseId = null;
+        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+        UserLoginResponseDto finalUserLoginResponseDto = new UserLoginResponseDto();
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
         for (UserLoginRequestDto usrLoginRequestDto : userList) {
@@ -76,21 +77,22 @@ public class UserServiceImpl implements UserService {
 
                 if (!(passwordEncoder.matches(userRequest.getPassword(), usrLoginRequestDto.getPassword()))) {
                     outputResponse = "Invalid Password";
-                    userResponseId = null;
+
                     //throw new RuntimeException("Invalid Password");
 
 
                 } else {
 
                     userResponseId = userLoginResponseService.getUserIdForResponse(userRequest.getUserName());
-                    logCheck = "Access Granted!";
-                    UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(logCheck, userResponseId, (userRequest.getUserName()));
+
+                    UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(outputResponse, userResponseId, (userRequest.getUserName()));
                     Map<String, Object> claims = new HashMap<>();
                     claims.put("logResponse", userLoginResponseDto);
 
                     String userName = userRequest.getUserName();
 
-                    outputResponse = jwtTokenUtil.doGenerateToken(claims, userName);
+                    outputResponse = "Access Granted!";
+                    accessToken = jwtTokenUtil.doGenerateToken(claims, userName);
 
                     break;
                 }
@@ -98,15 +100,19 @@ public class UserServiceImpl implements UserService {
             } else {
 
                 outputResponse = "Invalid Username ";
-                userResponseId = null;
+
                 // throw new RuntimeException("Invalid Username ");
 
             }
 
         }
+        finalUserLoginResponseDto.setLoginResponse(outputResponse);
+        finalUserLoginResponseDto.setUserName(userRequest.getUserName());
+        finalUserLoginResponseDto.setUserId(userResponseId);
+        finalUserLoginResponseDto.setAccessToken(accessToken);
 
 
-        return outputResponse;
+        return finalUserLoginResponseDto;
     }
 
 

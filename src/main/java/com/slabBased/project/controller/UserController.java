@@ -2,6 +2,7 @@ package com.slabBased.project.controller;
 
 import com.slabBased.project.Dto.UserDto;
 import com.slabBased.project.Dto.UserLoginRequestDto;
+import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.services.Implementation.UserDtoServicesImpl;
 import com.slabBased.project.services.Implementation.UserServiceImpl;
@@ -43,7 +44,7 @@ public class UserController {
     /*For Login Purpose*/
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public Object loginUser(@RequestBody UserLoginRequestDto user) throws RuntimeException {
+    public UserLoginResponseDto loginUser(@RequestBody UserLoginRequestDto user) throws RuntimeException {
 
 
         return userServices.userLoginCheck(user);

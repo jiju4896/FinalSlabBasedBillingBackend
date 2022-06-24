@@ -12,22 +12,30 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.slabBased.project.utils.ConstantUtil.jwtKey;
+import static com.slabBased.project.utils.ConstantUtil.jwtKeyExpiryTime;
+
 @Component
 public class JwtTokenUtil implements Serializable {
-    //@Value("${jwt.secret}")
-    private  final String secret ="asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
 
-    private static final long timeValidity=60*60*2;
+    private final String secret=jwtKey;
+    private final long timeValidity = jwtKeyExpiryTime;
 
-    public String generateToken (UserDetails userDetails){
-        Map<String,Object> claims=new HashMap<>();
-        return doGenerateToken(claims,userDetails.getUsername());
+
+
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateToken(claims, userDetails.getUsername());
     }
+
     Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(secret),
             SignatureAlgorithm.HS256.getJcaName());
-    public String doGenerateToken(Map<String,Object> claims,String userName){
+
+    public String doGenerateToken(Map<String, Object> claims, String userName) {
+
         return Jwts.builder().setClaims(claims).setSubject("Billing").setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+timeValidity*1000))
+                .setExpiration(new Date(System.currentTimeMillis() + timeValidity * 1000))
                 .signWith(hmacKey).compact();
     }
 }
