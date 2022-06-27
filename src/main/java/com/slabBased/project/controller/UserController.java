@@ -87,7 +87,7 @@ public class UserController {
     }
 
     /*For updating User Details*/
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PutMapping("user/modify/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     public String modifyUserDetails(@PathVariable(value = "userId") Long userId, @RequestBody User userRequest) throws RuntimeException {

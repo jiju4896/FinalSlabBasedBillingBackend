@@ -39,14 +39,11 @@ public class JwtTokenProvider implements Serializable {
 
     public String generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        System.out.println(authentication.getName());
         return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + jwtKeyExpiryTime * 1000)).signWith(signingKey, SignatureAlgorithm.HS256).compact();
     }
 
     public String getUsernameFromToken(String token) {
-        String userName = getClaimFromToken(token, Claims::getSubject);
-        System.out.println(userName);
-        return userName;
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
     public Date getExpirationDateFromToken(String token) {
@@ -59,9 +56,7 @@ public class JwtTokenProvider implements Serializable {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        Claims claim = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token).getBody();
-        System.out.println(claim);
-        return claim;
+        return Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token).getBody();
 
     }
 

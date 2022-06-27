@@ -38,14 +38,14 @@ public class BillsController {
         return billServices.addSlab(slabPeriodId, slabRequest);
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/read/slab-period")
     public List<SlabPeriod> readAllSlabPeriod() throws  RuntimeException {
 
         return billServices.getAllSlabPeriod();
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping("/bill/generator")
     @ResponseStatus(HttpStatus.CREATED)
     public String billGeneration(@RequestBody Bill bill) throws  RuntimeException {
@@ -55,14 +55,14 @@ public class BillsController {
 
 
     //OLD APIs
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/bills/{userId}")
     public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) throws  RuntimeException {
 
         return billServices.getAllBillsByUserId(userId);
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/lastBills/{userId}")
 
     public Bill readLastBill(@PathVariable(value = "userId") Long userId) throws  RuntimeException {
@@ -71,7 +71,7 @@ public class BillsController {
 
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/bill/{id}")
     public Bill getBillById(@PathVariable(value = "id") long id) throws  RuntimeException {
         return billServices.getBillDetailsByBillId(id);

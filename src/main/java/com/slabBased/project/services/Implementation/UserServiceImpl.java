@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public String addRole(Long userId, Role roleRequest) {
         try {
             Role role = new Role();
-            role.setRoleName(roleRequest.getRoleName());
+            role.setRoleName(roleRequest.getRoleName().toUpperCase());
             role.setRoleDescription(roleRequest.getRoleDescription());
             User user = uRepo.findAllById(userId);
             user.getRoles().add(role);
