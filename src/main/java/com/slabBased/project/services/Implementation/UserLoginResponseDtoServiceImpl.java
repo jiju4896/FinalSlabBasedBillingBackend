@@ -23,19 +23,21 @@ public class UserLoginResponseDtoServiceImpl implements UserLoginResponseDtoServ
     }
 
     Long userId;
-    private UserLoginResponseDto entityToDtoConversion(User user){
 
-   return modelMapper.map(user, UserLoginResponseDto.class);
+    private UserLoginResponseDto entityToDtoConversion(User user) {
+
+        return modelMapper.map(user, UserLoginResponseDto.class);
     }
 
-    public List<UserLoginResponseDto> getUserLoginResponseDetails(){
+    public List<UserLoginResponseDto> getUserLoginResponseDetails() {
         return userRepository.findAll().stream().map(this::entityToDtoConversion).collect(Collectors.toList());
 
 
     }
-    public Long getUserIdForResponse(String userName){
 
-        List<UserLoginResponseDto> idList=getUserLoginResponseDetails();
+    public Long getUserIdForResponse(String userName) {
+
+        List<UserLoginResponseDto> idList = getUserLoginResponseDetails();
 
         for (UserLoginResponseDto userLoginResponseDto : idList) {
             if (userLoginResponseDto.getUserName().equals(userName)) {
@@ -44,14 +46,6 @@ public class UserLoginResponseDtoServiceImpl implements UserLoginResponseDtoServ
         }
 
         return userId;
-    }
-    public UserLoginResponseDto getResponseObject(String logCheck,Long userResponseId,String userName){
-        UserLoginResponseDto userLoginResponse = new UserLoginResponseDto();
-        userLoginResponse.setUserName(userName);
-        userLoginResponse.setLoginResponse(logCheck);
-        userLoginResponse.setUserId(userResponseId);
-        return userLoginResponse;
-
     }
 
 

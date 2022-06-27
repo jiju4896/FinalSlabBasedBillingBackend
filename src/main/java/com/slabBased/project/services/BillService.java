@@ -8,9 +8,14 @@ import java.util.List;
 
 public interface BillService {
     String billCalculator(Bill bill);
+
     List<Bill> getAllBillsByUserId(Long userId);
+
     Bill getLastBillOfCurrentUser(Long userId);
+
     Bill getBillDetailsByBillId(long id);
+
     String addSlabPeriod(SlabPeriod slabPeriod);
-    String addSlab(Long SlabPeriodId,Slabs slab);
+
+    String addSlab(Long SlabPeriodId, Slabs slab);
 }

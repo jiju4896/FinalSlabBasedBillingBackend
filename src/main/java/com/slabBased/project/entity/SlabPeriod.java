@@ -25,7 +25,7 @@ public class SlabPeriod {
     private Date fromDate;
     @Column(name = "to_date")
     private Date toDate;
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Slabs> slabsSet = new HashSet<>();
 
     public SlabPeriod(Long id, Date fromDate, Date toDate) {

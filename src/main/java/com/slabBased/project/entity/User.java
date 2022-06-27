@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
-
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,11 +40,11 @@ public class User {
     @Column(name = "user_name", unique = true, nullable = false)
     @Pattern(regexp = userNameRegex, message = "username must be of 6 to 12 length with no special characters")
     private String userName;
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Bill> bill = new ArrayList<>();
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "tbl_user_role", joinColumns = {@JoinColumn(name = "USER_ID")}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
 
     private Set<Role> roles = new HashSet<>();

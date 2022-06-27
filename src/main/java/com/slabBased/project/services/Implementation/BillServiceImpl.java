@@ -1,6 +1,5 @@
 package com.slabBased.project.services.Implementation;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.slabBased.project.entity.Bill;
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
@@ -13,7 +12,9 @@ import com.slabBased.project.utils.BillCalculatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -25,11 +26,11 @@ public class BillServiceImpl implements BillService {
     SlabPeriodRepository slabPeriodRepository;
 
 
-
     Double finalAmount = 0.0;
     Double net, sRate;
 
     String resultOutput = " ";
+
     public BillServiceImpl(BillRepository billRepository, UserRepository userRepository, SlabPeriodRepository slabPeriodRepository) {
         this.billRepository = billRepository;
         this.userRepository = userRepository;
@@ -39,7 +40,7 @@ public class BillServiceImpl implements BillService {
     public String addSlabPeriod(SlabPeriod slabPeriod) {
         try {
             slabPeriodRepository.save(slabPeriod);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Unable to Save");
         }
         return "SLAB PERIOD CREATED";

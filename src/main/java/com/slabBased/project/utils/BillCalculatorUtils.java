@@ -5,11 +5,11 @@ import java.util.Date;
 
 
 public class BillCalculatorUtils {
-   Date fromDate, toDate, currDate;
+    Date fromDate, toDate, currDate;
 
     Double prevRead;
     Double curRead;
-    Double netUnit=0.0;
+    Double netUnit = 0.0;
     Double startRead;
     Double endRead;
     Double slabValue;
@@ -33,7 +33,7 @@ public class BillCalculatorUtils {
     }
 
 
-    public Double netUnitCalc(Double curRead,Double prevRead) {
+    public Double netUnitCalc(Double curRead, Double prevRead) {
         netUnit = curRead - prevRead;
 
         return netUnit;
@@ -55,7 +55,7 @@ public class BillCalculatorUtils {
     }
 
 
-    public Double billGenerator(Double netUnit,Double slabValue) {
+    public Double billGenerator(Double netUnit, Double slabValue) {
 
         return (netUnit * slabValue);
 

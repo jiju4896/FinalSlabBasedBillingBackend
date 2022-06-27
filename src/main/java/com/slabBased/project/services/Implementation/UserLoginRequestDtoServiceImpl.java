@@ -19,17 +19,17 @@ public class UserLoginRequestDtoServiceImpl implements UserLoginRequestDtoServic
     private ModelMapper modelMapper;
 
     public UserLoginRequestDtoServiceImpl(UserRepository userRepository) {
-        this.uRepo=userRepository;
+        this.uRepo = userRepository;
     }
 
-    private UserLoginRequestDto entityToDtoConversion(User user){
+    private UserLoginRequestDto entityToDtoConversion(User user) {
         return modelMapper.map(user, UserLoginRequestDto.class);
     }
 
-   public List<UserLoginRequestDto> getUserLoginDetails(){
+    public List<UserLoginRequestDto> getUserLoginDetails() {
         return uRepo.findAll().stream().map(this::entityToDtoConversion).collect(Collectors.toList());
 
 
-   }
+    }
 
 }

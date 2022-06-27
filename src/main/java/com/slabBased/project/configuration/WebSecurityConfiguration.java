@@ -13,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import javax.annotation.Resource;
 
 @Configuration
@@ -31,31 +30,33 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users/authenticate", "/users/register","/users/username/check").permitAll()
+                .antMatchers("/users/authenticate", "/users/register", "/users/username/check").permitAll()
                 .anyRequest().authenticated()
                 .and()
-             .exceptionHandling().authenticationEntryPoint(unAuthorizedEntryPoint).and()
+                .exceptionHandling().authenticationEntryPoint(unAuthorizedEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
+
     @Bean
-    public JwtAuthenticationFilter authenticationTokenFilterBean() throws Exception {
+    public JwtAuthenticationFilter authenticationTokenFilterBean() throws RuntimeException {
         return new JwtAuthenticationFilter();
     }
-
 
 
 }

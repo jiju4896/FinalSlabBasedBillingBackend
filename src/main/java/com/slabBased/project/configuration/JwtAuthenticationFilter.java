@@ -3,7 +3,6 @@ package com.slabBased.project.configuration;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public String TOKEN_PREFIX="Bearer";
 
     @Resource(name = "userService")
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -38,7 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String authToken = null;
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
-            authToken = header.replace(TOKEN_PREFIX,"");
+            authToken = (header.replace(TOKEN_PREFIX,"")).trim();
+
             try {
                 username = jwtTokenProvider.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
@@ -46,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
             } catch(SignatureException e){
-                logger.error("Authentication Failed. Username or Password not valid.");
+                logger.error("Authentication Failed. Signature not valid.");
             }
         } else {
             logger.warn("Couldn't find bearer string, header will be ignored");

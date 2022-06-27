@@ -1,12 +1,10 @@
 package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
-import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserService;
-import com.slabBased.project.configuration.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,8 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Service(value = "userService")
@@ -30,20 +29,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     UserLoginResponseDtoServiceImpl userLoginResponseService;
 
 
-    String logCheck;
-    Long userResponseId;
-
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public UserDetails loadUserByUsername(String userName)throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
         User user = uRepo.findAllByUserName(userName);
-        if(user == null){
+        if (user == null) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),  getAuthority(user));
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), getAuthority(user));
     }
 
     private Set<SimpleGrantedAuthority> getAuthority(User user) {
@@ -52,8 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return authorities;
 
 
-
-       }
+    }
 
     public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
         this.uRepo = uRepo;
@@ -82,58 +77,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         return "USER REGISTERED !";
 
-    }
-
-
-    public UserLoginResponseDto userLoginCheck(UserLoginRequestDto userRequest) {
-        String outputResponse = " ";
-        String accessToken = null;
-        userResponseId = null;
-        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
-        UserLoginResponseDto finalUserLoginResponseDto = new UserLoginResponseDto();
-
-        List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
-        for (UserLoginRequestDto usrLoginRequestDto : userList) {
-            if (usrLoginRequestDto.getUserName().equals(userRequest.getUserName())) {
-
-                if (!(passwordEncoder.matches(userRequest.getPassword(), usrLoginRequestDto.getPassword()))) {
-                    outputResponse = "Invalid Password";
-
-                    //throw new RuntimeException("Invalid Password");
-
-
-                } else {
-
-                    userResponseId = userLoginResponseService.getUserIdForResponse(userRequest.getUserName());
-
-                    UserLoginResponseDto userLoginResponseDto = userLoginResponseService.getResponseObject(outputResponse, userResponseId, (userRequest.getUserName()));
-                    Map<String, Object> claims = new HashMap<>();
-                    claims.put("logResponse", userLoginResponseDto);
-
-                    String userName = userRequest.getUserName();
-
-                    outputResponse = "Access Granted!";
-                    accessToken = jwtTokenProvider.doGenerateToken(claims, userName);
-
-                    break;
-                }
-
-            } else {
-
-                outputResponse = "Invalid Username ";
-
-                // throw new RuntimeException("Invalid Username ");
-
-            }
-
-        }
-        finalUserLoginResponseDto.setLoginResponse(outputResponse);
-        finalUserLoginResponseDto.setUserName(userRequest.getUserName());
-        finalUserLoginResponseDto.setUserId(userResponseId);
-        finalUserLoginResponseDto.setAccessToken(accessToken);
-
-
-        return finalUserLoginResponseDto;
     }
 
 

@@ -95,34 +95,6 @@ class UserServiceImplTest {
 
     }
 
-    @Test
-    void userLoginCheck() {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-        UserLoginRequestDto userLoginRequestDto1 = new UserLoginRequestDto("saji122", passwordEncoder.encode("1254"));
-        UserLoginRequestDto userLoginRequestDto2 = new UserLoginRequestDto("saji12248", passwordEncoder.encode("123"));
-        List<UserLoginRequestDto> userList = new ArrayList<>();
-        userList.add(userLoginRequestDto2);
-        userList.add(userLoginRequestDto1);
-
-
-        UserLoginRequestDto userLoginRequestDto = new UserLoginRequestDto("saji122", "1254");
-
-        UserLoginResponseDto callingUserLoginCheckUpMethodWhenUserNameAndPasswordExists = userService.userLoginCheck(userLoginRequestDto);
-        when(userLoginRequestDtoService.getUserLoginDetails()).thenReturn(userList);
-        verify(userLoginRequestDtoService, times(1)).getUserLoginDetails();
-        //verify(userLoginResponseDtoService,times(1)).getUserIdForResponse(userLoginRequestDto.getUserName());
-
-
-        UserLoginRequestDto userLoginRequestWithInvalidUserName = new UserLoginRequestDto("Laji12", "1254");
-     UserLoginResponseDto callingUserLoginMatchWhenUserNameDoesnotExist=userService.userLoginCheck(userLoginRequestWithInvalidUserName);
-        assertEquals("Invalid Username ",callingUserLoginMatchWhenUserNameDoesnotExist.getLoginResponse());
-
-        UserLoginRequestDto userLoginRequestWithIncorrectPassword= new UserLoginRequestDto("saji122", "12547");
-       UserLoginResponseDto callingUserLoginMatchWhenPasswordIsIncorrect=userService.userLoginCheck(userLoginRequestWithIncorrectPassword);
-        assertEquals("Invalid Password",callingUserLoginMatchWhenPasswordIsIncorrect.getLoginResponse());
-
-    }
 
     @Test
     void userNameCheck() {

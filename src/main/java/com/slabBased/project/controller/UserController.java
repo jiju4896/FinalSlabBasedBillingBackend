@@ -7,6 +7,7 @@ import com.slabBased.project.entity.Role;
 import com.slabBased.project.services.Implementation.UserDtoServicesImpl;
 import com.slabBased.project.services.Implementation.UserServiceImpl;
 import com.slabBased.project.configuration.JwtTokenProvider;
+import com.slabBased.project.services.UserLoginResponseDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,9 @@ public class UserController {
     UserServiceImpl userServices;
     @Autowired
     UserDtoServicesImpl userDtoServices;
-
+    @Autowired
+    UserLoginResponseDtoService userLoginResponseDtoService;
+    Long userResponseId;
 
     /* For UserName Availability Check */
     @GetMapping("/username/check")
@@ -63,20 +66,22 @@ public class UserController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String token = jwtTokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new UserLoginResponseDto(token));
-    }
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public UserLoginResponseDto loginUser(@RequestBody UserLoginRequestDto user) throws RuntimeException {
+        userResponseId = userLoginResponseDtoService.getUserIdForResponse(loginUser.getUserName());
 
+        UserLoginResponseDto finalUserLoginResponseDto=new UserLoginResponseDto();
+        finalUserLoginResponseDto.setAccessToken(token);
+        finalUserLoginResponseDto.setUserId(userResponseId);
+        finalUserLoginResponseDto.setLoginResponse("Access Granted!");
+        finalUserLoginResponseDto.setUserName(loginUser.getUserName());
 
-        return userServices.userLoginCheck(user);
+        return ResponseEntity.ok(finalUserLoginResponseDto);
     }
+
 
     /*To get All Users*/
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("get-all/users")
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAllUsers() throws RuntimeException{
         return userDtoServices.getUserDetails();
 
     }

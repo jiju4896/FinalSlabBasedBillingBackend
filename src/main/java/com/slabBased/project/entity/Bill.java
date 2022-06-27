@@ -1,13 +1,11 @@
 package com.slabBased.project.entity;
 
-import javax.persistence.*;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbl_bill_storage")

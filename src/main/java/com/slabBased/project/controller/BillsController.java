@@ -1,24 +1,15 @@
 package com.slabBased.project.controller;
 
-import java.util.List;
-
+import com.slabBased.project.entity.Bill;
 import com.slabBased.project.entity.SlabPeriod;
 import com.slabBased.project.entity.Slabs;
 import com.slabBased.project.services.Implementation.BillServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
-import com.slabBased.project.entity.Bill;
+import java.util.List;
 
 
 @RestController
@@ -32,7 +23,7 @@ public class BillsController {
     //New APIs
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/slab-period/initializer")
-    public String addSlabPeriod(@RequestBody SlabPeriod slabPeriod) {
+    public String addSlabPeriod(@RequestBody SlabPeriod slabPeriod) throws RuntimeException {
 
 
         return billServices.addSlabPeriod(slabPeriod);
@@ -41,7 +32,7 @@ public class BillsController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("{slabPeriodId}/slab/initializer")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId, @RequestBody Slabs slabRequest) {
+    public String addSlab(@PathVariable(value = "slabPeriodId") Long slabPeriodId, @RequestBody Slabs slabRequest) throws  RuntimeException {
 
 
         return billServices.addSlab(slabPeriodId, slabRequest);
@@ -49,7 +40,7 @@ public class BillsController {
 
     @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/read/slab-period")
-    public List<SlabPeriod> readAllSlabPeriod() {
+    public List<SlabPeriod> readAllSlabPeriod() throws  RuntimeException {
 
         return billServices.getAllSlabPeriod();
     }
@@ -57,7 +48,7 @@ public class BillsController {
     @PreAuthorize("hasRole('ADMIN','USER')")
     @PostMapping("/bill/generator")
     @ResponseStatus(HttpStatus.CREATED)
-    public String billGeneration(@RequestBody Bill bill) {
+    public String billGeneration(@RequestBody Bill bill) throws  RuntimeException {
 
         return billServices.billCalculator(bill);
     }
@@ -66,7 +57,7 @@ public class BillsController {
     //OLD APIs
     @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/bills/{userId}")
-    public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) {
+    public List<Bill> readBillByUser(@PathVariable(value = "userId") Long userId) throws  RuntimeException {
 
         return billServices.getAllBillsByUserId(userId);
     }
@@ -74,7 +65,7 @@ public class BillsController {
     @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/lastBills/{userId}")
 
-    public Bill readLastBill(@PathVariable(value = "userId") Long userId) {
+    public Bill readLastBill(@PathVariable(value = "userId") Long userId) throws  RuntimeException {
 
         return billServices.getLastBillOfCurrentUser(userId);
 
@@ -82,7 +73,7 @@ public class BillsController {
 
     @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/bill/{id}")
-    public Bill getBillById(@PathVariable(value = "id") long id) {
+    public Bill getBillById(@PathVariable(value = "id") long id) throws  RuntimeException {
         return billServices.getBillDetailsByBillId(id);
     }
 
