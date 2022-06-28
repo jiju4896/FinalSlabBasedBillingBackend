@@ -39,7 +39,7 @@ public class JwtTokenProvider implements Serializable {
 
     public String generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + jwtKeyExpiryTime * 1000)).signWith(signingKey, SignatureAlgorithm.HS256).compact();
+        return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + jwtKeyExpiryTime )).signWith(signingKey, SignatureAlgorithm.HS256).compact();
     }
 
     public String getUsernameFromToken(String token) {

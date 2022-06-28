@@ -136,6 +136,7 @@ public class BillServiceImpl implements BillService {
     }
 
     public List<Bill> getAllBillsByUserId(Long userId) {
+
         return billRepository.findAllByUserId(userId);
     }
 

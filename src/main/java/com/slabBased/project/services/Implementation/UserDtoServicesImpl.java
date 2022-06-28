@@ -1,6 +1,6 @@
 package com.slabBased.project.services.Implementation;
 
-import com.slabBased.project.Dto.UserDto;
+import com.slabBased.project.Dto.GetAllUsersDetailsDTO;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserDtoService;
@@ -22,11 +22,11 @@ public class UserDtoServicesImpl implements UserDtoService {
         this.uRepo = uRepo;
     }
 
-    private UserDto entityToDtoConversion(User user) {
-        return modelMapper.map(user, UserDto.class);
+    private GetAllUsersDetailsDTO entityToDtoConversion(User user) {
+        return modelMapper.map(user, GetAllUsersDetailsDTO.class);
     }
 
-    public List<UserDto> getUserDetails() {
+    public List<GetAllUsersDetailsDTO> getUserDetails() {
         return uRepo.findAll().stream().map(this::entityToDtoConversion).collect(Collectors.toList());
 
 

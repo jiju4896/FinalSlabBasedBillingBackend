@@ -40,7 +40,7 @@ class UserServiceImplTest {
 
     @Test
     void addUserAccountTest() {
-        User user = new User(15L, "Lijesh", "o", "test@123.com", "123", "lijesh12");
+        User user = new User(15L, "Lijesh", " ", "test@123.com", "123", "lijesh12");
         when(userRepository.save(any(User.class))).thenReturn(user);
         userService.addUserAccount(user);
         verify(userRepository, times(1)).existsByUserName(user.getUserName());
@@ -114,5 +114,9 @@ class UserServiceImplTest {
         assertFalse(ifUserNameIsNotFoundInDB);
 
 
+    }
+
+    @Test
+    void addUserAccount() {
     }
 }

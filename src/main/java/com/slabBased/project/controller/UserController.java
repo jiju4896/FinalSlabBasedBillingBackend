@@ -1,12 +1,13 @@
 package com.slabBased.project.controller;
 
-import com.slabBased.project.Dto.UserDto;
+import com.slabBased.project.Dto.GetAllUsersDetailsDTO;
 import com.slabBased.project.Dto.UserLoginRequestDto;
 import com.slabBased.project.Dto.UserLoginResponseDto;
+import com.slabBased.project.configuration.JwtTokenProvider;
 import com.slabBased.project.entity.Role;
+import com.slabBased.project.entity.User;
 import com.slabBased.project.services.Implementation.UserDtoServicesImpl;
 import com.slabBased.project.services.Implementation.UserServiceImpl;
-import com.slabBased.project.configuration.JwtTokenProvider;
 import com.slabBased.project.services.UserLoginResponseDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import com.slabBased.project.entity.User;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 
@@ -36,6 +40,7 @@ public class UserController {
     @Autowired
     UserLoginResponseDtoService userLoginResponseDtoService;
     Long userResponseId;
+
 
     /* For UserName Availability Check */
     @GetMapping("/username/check")
@@ -56,24 +61,26 @@ public class UserController {
 
     /*For Login Purpose*/
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> generateToken(@RequestBody UserLoginRequestDto loginUser) throws AuthenticationException {
-        JwtTokenProvider jwtTokenProvider =new JwtTokenProvider();
+    public ResponseEntity<?> generateToken(@RequestBody UserLoginRequestDto userLoginRequestDto) throws AuthenticationException {
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginUser.getUserName(),
-                        loginUser.getPassword()
+                        userLoginRequestDto.getUserName(),
+                        userLoginRequestDto.getPassword()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtTokenProvider.generateToken(authentication);
-        userResponseId = userLoginResponseDtoService.getUserIdForResponse(loginUser.getUserName());
 
-        UserLoginResponseDto finalUserLoginResponseDto=new UserLoginResponseDto();
+        final String token = jwtTokenProvider.generateToken(authentication);
+        userResponseId = userLoginResponseDtoService.getUserIdForResponse(userLoginRequestDto.getUserName());
+
+        UserLoginResponseDto finalUserLoginResponseDto = new UserLoginResponseDto();
         finalUserLoginResponseDto.setAccessToken(token);
         finalUserLoginResponseDto.setUserId(userResponseId);
         finalUserLoginResponseDto.setLoginResponse("Access Granted!");
-        finalUserLoginResponseDto.setUserName(loginUser.getUserName());
-
+        finalUserLoginResponseDto.setUserName(userLoginRequestDto.getUserName());
+        User user = userServices.findAllUserDetailsFromUserName(userLoginRequestDto.getUserName());
+        finalUserLoginResponseDto.setRoleSet(user.getRoles());
         return ResponseEntity.ok(finalUserLoginResponseDto);
     }
 
@@ -81,7 +88,7 @@ public class UserController {
     /*To get All Users*/
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("get-all/users")
-    public List<UserDto> getAllUsers() throws RuntimeException{
+    public List<GetAllUsersDetailsDTO> getAllUsers() throws RuntimeException {
         return userDtoServices.getUserDetails();
 
     }
@@ -118,6 +125,11 @@ public class UserController {
     public String deleteUserById(@PathVariable(value = "userId") Long userId) throws RuntimeException {
         return userServices.deleteUserByTheId(userId);
     }
-
+    /*For Deleting Multiple Users*/
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/multiple/users")
+    public String deleteMultipleUser(@RequestBody List<User> user) throws RuntimeException {
+        return userServices.deleteMultipleUsers(user);
+    }
 
 }

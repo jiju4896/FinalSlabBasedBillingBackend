@@ -3,6 +3,8 @@ package com.slabBased.project.services;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
 
+import java.util.List;
+
 public interface UserService {
     Boolean userNameCheck(String userName);
 
@@ -16,4 +18,6 @@ public interface UserService {
     String deleteUserByTheId(Long userId);
 
     String modifyUser(Long userId, User userRequest);
+
+    String deleteMultipleUsers(List<User> user);
 }

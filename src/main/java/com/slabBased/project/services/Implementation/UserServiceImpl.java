@@ -32,6 +32,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
+        this.uRepo = uRepo;
+        this.userLoginDtoServices = userLoginRequestDtoService;
+        this.userLoginResponseService = userLoginResponseService;
+
+    }
+
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
@@ -50,12 +57,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
-    public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
-        this.uRepo = uRepo;
-        this.userLoginDtoServices = userLoginRequestDtoService;
-        this.userLoginResponseService = userLoginResponseService;
-
-    }
 
     public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
@@ -83,8 +84,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Boolean userNameCheck(String userName) {
 
         List<UserLoginRequestDto> userList = userLoginDtoServices.getUserLoginDetails();
+
         for (UserLoginRequestDto userLoginRequestDto : userList) {
             userFound = userLoginRequestDto.getUserName().equals(userName);
+            if (userFound) {
+                break;
+            }
 
         }
         return userFound;
@@ -130,11 +135,44 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public String modifyUser(Long userId, User userRequest) {
         User usr = uRepo.findAllById(userId);
-        usr.setFirstName(userRequest.getFirstName());
-        usr.setLastName(userRequest.getLastName());
-        usr.setPassword(userRequest.getPassword());
-        usr.setEmail(userRequest.getEmail());
+
+        if (userRequest.getFirstName() == (null)) {
+            usr.setFirstName(usr.getFirstName());
+        } else {
+            usr.setFirstName(userRequest.getFirstName());
+        }
+        if (userRequest.getLastName() == (null)) {
+            usr.setLastName(usr.getLastName());
+        } else {
+            usr.setLastName(userRequest.getLastName());
+        }
+        if (userRequest.getPassword() == (null)) {
+            usr.setPassword(usr.getPassword());
+        } else {
+            usr.setPassword(userRequest.getPassword());
+        }
+        if (userRequest.getEmail() == (null)) {
+            usr.setEmail(usr.getEmail());
+        } else {
+            usr.setEmail(userRequest.getEmail());
+        }
+        if (usr.getUserName()==(null)) {
+            usr.setUserName(usr.getUserName());
+        } else {
+            usr.setUserName(userRequest.getUserName());
+        }
         uRepo.save(usr);
         return "User Updated";
+    }
+
+    public String deleteMultipleUsers(List<User> user) {
+        for (User usr : user) {
+            uRepo.deleteById(usr.getId());
+        }
+        return "All Users Deleted!!";
+    }
+
+    public User findAllUserDetailsFromUserName(String userName) {
+        return uRepo.findAllByUserName(userName);
     }
 }

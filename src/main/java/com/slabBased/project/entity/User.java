@@ -26,16 +26,15 @@ public class User {
     @Column(name = "id")
     private Long id;
     @Column(name = "first_name")
-    @Pattern(regexp = nameRegex, message = "FirstName should Contain Alphabets Only")
+    @Pattern(regexp = firstNameRegex, message = "FirstName should Contain Alphabets Only")
     private String firstName;
     @Column(name = "last_name")
-    @Pattern(regexp = nameRegex, message = "LastName should Contain Alphabets Only")
+    @Pattern(regexp = lastNameRegex, message = "LastName should Contain Alphabets Only")
     private String lastName;
 
     @Pattern(regexp = emailRegex, message = "Please Provide a Valid Email")
     private String email;
     @Column(nullable = false)
-    @Pattern(regexp = passwordRegex, message = "password must contain atleast 1 uppercase, 1 lowercase, 1 special character and 1 digit")
     private String password;
     @Column(name = "user_name", unique = true, nullable = false)
     @Pattern(regexp = userNameRegex, message = "username must be of 6 to 12 length with no special characters")
