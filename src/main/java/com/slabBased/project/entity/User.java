@@ -34,6 +34,7 @@ public class User {
 
     @Pattern(regexp = emailRegex, message = "Please Provide a Valid Email")
     private String email;
+
     @Column(nullable = false)
     private String password;
     @Column(name = "user_name", unique = true, nullable = false)
@@ -41,7 +42,6 @@ public class User {
     private String userName;
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Bill> bill = new ArrayList<>();
-
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "tbl_user_role", joinColumns = {@JoinColumn(name = "USER_ID")}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})

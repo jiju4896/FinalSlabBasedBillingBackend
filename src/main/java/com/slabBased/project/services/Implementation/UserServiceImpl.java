@@ -7,6 +7,7 @@ import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.slabBased.project.utils.ConstantUtil.passwordRegex;
 
 
 @Service(value = "userService")
@@ -57,6 +62,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
+    public static boolean isValidPassword(String password) {
+        Pattern pattern = Pattern.compile(passwordRegex);
+
+        if (password == null) {
+            return false;
+        }
+        Matcher matcher = pattern.matcher(password);
+
+        return matcher.matches();
+    }
 
     public String addUserAccount(User user) {
         if (uRepo.existsByUserName(user.getUserName())) {
@@ -68,7 +83,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         usr.setEmail(user.getEmail());
         usr.setFirstName(user.getFirstName());
         usr.setLastName(user.getLastName());
-        usr.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (isValidPassword(user.getPassword())) {
+            usr.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else
+            throw new RuntimeException("Invalid Password!! password must contain atleast 1 uppercase, 1 lowercase, 1 special character and 1 digit");
         Role role = new Role();
         role.setRoleName("USER");
         role.setRoleDescription("This user has only user rights!!");
@@ -156,7 +174,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             usr.setEmail(userRequest.getEmail());
         }
-        if (usr.getUserName()==(null)) {
+        if (usr.getUserName() == (null)) {
             usr.setUserName(usr.getUserName());
         } else {
             usr.setUserName(userRequest.getUserName());
@@ -174,5 +192,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public User findAllUserDetailsFromUserName(String userName) {
         return uRepo.findAllByUserName(userName);
+    }
+
+    public String userLogout(){
+        return "User Logout Success";
     }
 }
