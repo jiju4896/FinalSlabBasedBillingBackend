@@ -11,5 +11,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long tokenId;
+    @Column(name = "token_user_id")
+    private Long tokenUserId;
     private String tokenCopy;
 }

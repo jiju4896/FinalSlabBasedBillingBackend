@@ -2,6 +2,7 @@ package com.slabBased.project.services.Implementation;
 
 import com.slabBased.project.Dto.UserLoginRequestDto;
 import com.slabBased.project.entity.Role;
+import com.slabBased.project.entity.Token;
 import com.slabBased.project.entity.User;
 import com.slabBased.project.repository.TokenRepository;
 import com.slabBased.project.repository.UserRepository;
@@ -205,7 +206,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public String userLogout() {
         SecurityContextHolder.clearContext();
-        tokenRepository.deleteById(tokenId);
+       Token token= tokenRepository.getById(tokenId);
+        System.out.println(token.getTokenUserId());
+
+    List<Token> tokenList=tokenRepository.findAllByTokenUserId(token.getTokenUserId());
+        for (Token token1:tokenList){
+            tokenRepository.deleteById(token1.getTokenId());
+        }
+
         return "User Logout Success";
     }
 }

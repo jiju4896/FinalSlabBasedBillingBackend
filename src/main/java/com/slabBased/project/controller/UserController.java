@@ -72,9 +72,6 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final String token = jwtTokenProvider.generateToken(authentication);
-        Token token1=new Token();
-        token1.setTokenCopy(passwordEncoder.encode(token));
-        tokenRepository.save(token1);
 
         User userObjectForGettingUserDetailsFromRepository = userServices.findAllUserDetailsFromUserName(userLoginRequestDto.getUserName());
 
@@ -86,6 +83,11 @@ public class UserController {
         finalUserLoginResponseDto.setLastName(userObjectForGettingUserDetailsFromRepository.getLastName());
         User user = userServices.findAllUserDetailsFromUserName(userLoginRequestDto.getUserName());
         finalUserLoginResponseDto.setRoleSet(user.getRoles());
+        Token token1=new Token();
+        token1.setTokenUserId(userObjectForGettingUserDetailsFromRepository.getId());
+        token1.setTokenCopy(passwordEncoder.encode(token));
+        tokenRepository.save(token1);
+
         return ResponseEntity.ok(finalUserLoginResponseDto);
     }
 
