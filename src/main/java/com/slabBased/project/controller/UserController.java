@@ -5,10 +5,11 @@ import com.slabBased.project.Dto.UserLoginRequestDto;
 import com.slabBased.project.Dto.UserLoginResponseDto;
 import com.slabBased.project.configuration.JwtTokenProvider;
 import com.slabBased.project.entity.Role;
+import com.slabBased.project.entity.Token;
 import com.slabBased.project.entity.User;
+import com.slabBased.project.repository.TokenRepository;
 import com.slabBased.project.services.Implementation.UserDtoServicesImpl;
 import com.slabBased.project.services.Implementation.UserServiceImpl;
-import com.slabBased.project.services.UserLoginResponseDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 
@@ -37,10 +36,11 @@ public class UserController {
     UserServiceImpl userServices;
     @Autowired
     UserDtoServicesImpl userDtoServices;
-    @Autowired
-    UserLoginResponseDtoService userLoginResponseDtoService;
-    Long userResponseId;
 
+    @Autowired
+    TokenRepository tokenRepository;
+
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /* For UserName Availability Check */
     @GetMapping("/username/check")
@@ -72,13 +72,18 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final String token = jwtTokenProvider.generateToken(authentication);
-        userResponseId = userLoginResponseDtoService.getUserIdForResponse(userLoginRequestDto.getUserName());
+        Token token1=new Token();
+        token1.setTokenCopy(passwordEncoder.encode(token));
+        tokenRepository.save(token1);
+
+        User userObjectForGettingUserDetailsFromRepository = userServices.findAllUserDetailsFromUserName(userLoginRequestDto.getUserName());
 
         UserLoginResponseDto finalUserLoginResponseDto = new UserLoginResponseDto();
         finalUserLoginResponseDto.setAccessToken(token);
-        finalUserLoginResponseDto.setUserId(userResponseId);
+        finalUserLoginResponseDto.setUserId(userObjectForGettingUserDetailsFromRepository.getId());
         finalUserLoginResponseDto.setLoginResponse("Access Granted!");
-        finalUserLoginResponseDto.setUserName(userLoginRequestDto.getUserName());
+        finalUserLoginResponseDto.setFirstName(userObjectForGettingUserDetailsFromRepository.getFirstName());
+        finalUserLoginResponseDto.setLastName(userObjectForGettingUserDetailsFromRepository.getLastName());
         User user = userServices.findAllUserDetailsFromUserName(userLoginRequestDto.getUserName());
         finalUserLoginResponseDto.setRoleSet(user.getRoles());
         return ResponseEntity.ok(finalUserLoginResponseDto);
@@ -131,5 +136,12 @@ public class UserController {
     public String deleteMultipleUser(@RequestBody List<User> user) throws RuntimeException {
         return userServices.deleteMultipleUsers(user);
     }
+    /*For Logout Purpose*/
+    @PostMapping("/logout")
+    public  String currentUserLogout(){
+
+        return userServices.userLogout();
+    }
+
 
 }

@@ -3,6 +3,7 @@ package com.slabBased.project.services.Implementation;
 import com.slabBased.project.Dto.UserLoginRequestDto;
 import com.slabBased.project.entity.Role;
 import com.slabBased.project.entity.User;
+import com.slabBased.project.repository.TokenRepository;
 import com.slabBased.project.repository.UserRepository;
 import com.slabBased.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +31,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     UserRepository uRepo;
     @Autowired
     UserLoginRequestDtoServiceImpl userLoginDtoServices;
+
     @Autowired
-    UserLoginResponseDtoServiceImpl userLoginResponseService;
+    TokenRepository tokenRepository;
 
 
     Boolean userFound;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private Long tokenId;
 
-    public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService, UserLoginResponseDtoServiceImpl userLoginResponseService) {
+
+    public UserServiceImpl(UserRepository uRepo, UserLoginRequestDtoServiceImpl userLoginRequestDtoService) {
         this.uRepo = uRepo;
         this.userLoginDtoServices = userLoginRequestDtoService;
-        this.userLoginResponseService = userLoginResponseService;
+
 
     }
 
@@ -194,7 +198,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return uRepo.findAllByUserName(userName);
     }
 
-    public String userLogout(){
+    public void setTokenIdFromRequest(Long tokenIdFromRequest) {
+        this.tokenId = tokenIdFromRequest;
+
+    }
+
+    public String userLogout() {
+        SecurityContextHolder.clearContext();
+        tokenRepository.deleteById(tokenId);
         return "User Logout Success";
     }
 }

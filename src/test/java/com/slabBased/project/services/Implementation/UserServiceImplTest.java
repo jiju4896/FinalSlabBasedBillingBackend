@@ -26,14 +26,13 @@ class UserServiceImplTest {
     @Mock
     UserLoginRequestDtoServiceImpl userLoginRequestDtoService;
 
-    @Mock
-    UserLoginResponseDtoServiceImpl userLoginResponseDtoService;
+
 
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
-        this.userService = new UserServiceImpl(this.userRepository, this.userLoginRequestDtoService,this.userLoginResponseDtoService);
+        this.userService = new UserServiceImpl(this.userRepository, this.userLoginRequestDtoService);
 
 
     }

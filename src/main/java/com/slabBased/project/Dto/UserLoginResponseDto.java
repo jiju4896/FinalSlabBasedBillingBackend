@@ -14,7 +14,8 @@ import java.util.Set;
 public class UserLoginResponseDto {
     private String accessToken;
     private String loginResponse;
-    private String userName;
+    private String firstName;
+    private String lastName;
     private Long userId;
     private Set<Role> roleSet=new HashSet<>();
 

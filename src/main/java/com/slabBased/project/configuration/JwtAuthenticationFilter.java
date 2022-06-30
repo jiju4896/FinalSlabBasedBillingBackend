@@ -1,5 +1,8 @@
 package com.slabBased.project.configuration;
 
+import com.slabBased.project.entity.Token;
+import com.slabBased.project.repository.TokenRepository;
+import com.slabBased.project.services.Implementation.UserServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,37 +21,55 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    public String HEADER_STRING="Authorization";
+    public String HEADER_STRING = "Authorization";
 
-    public String TOKEN_PREFIX="Bearer";
+    public String TOKEN_PREFIX = "Bearer";
 
     @Resource(name = "userService")
     @Autowired
     private UserDetailsService userDetailsService;
-
+    @Autowired
+    private UserServiceImpl userService;
+    @Autowired
+    private TokenRepository tokenRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private String authToken;
+
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws  ServletException, java.io.IOException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, java.io.IOException {
 
         String header = req.getHeader(HEADER_STRING);
         String username = null;
-        String authToken = null;
+
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
-            authToken = (header.replace(TOKEN_PREFIX,"")).trim();
+            authToken = (header.replace(TOKEN_PREFIX, "")).trim();
 
             try {
-                username = jwtTokenProvider.getUsernameFromToken(authToken);
+                List<Token> tokenList = tokenRepository.findAll();
+                for (Token token : tokenList) {
+                    if (passwordEncoder.matches(authToken, token.getTokenCopy())) {
+                        userService.setTokenIdFromRequest(token.getTokenId());
+                        username = jwtTokenProvider.getUsernameFromToken(authToken);
+                        break;
+
+
+                    }
+                }
+
+
             } catch (IllegalArgumentException e) {
                 logger.error("An error occurred while fetching Username from Token", e);
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
-            } catch(SignatureException e){
+            } catch (SignatureException e) {
                 logger.error("Authentication Failed. Signature not valid.");
             }
         } else {
